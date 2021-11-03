@@ -1,0 +1,147 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Codes for COPD&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+  },
+  "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings",
+  "identifier": [
+    {
+      "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+      "value": "CNICS-COPD-codings"
+    }
+  ],
+  "version": "20211021",
+  "name": "CNICS COPD Codings",
+  "status": "draft",
+  "experimental": true,
+  "date": "2021-10-21",
+  "publisher": "CIRG",
+  "contact": [
+    {
+      "name": "CIRG project team",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.cirg.washington.edu/"
+        }
+      ]
+    }
+  ],
+  "description": "ValueSet including all the codings used by CNICS to define COPD or COPD exacerbated",
+  "compose": {
+    "lockedDate": "2021-10-21",
+    "include": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "concept": [
+          {
+            "code": "491"
+          },
+          {
+            "code": "491.0"
+          },
+          {
+            "code": "491.1"
+          },
+          {
+            "code": "491.2"
+          },
+          {
+            "code": "491.20"
+          },
+          {
+            "code": "491.21"
+          },
+          {
+            "code": "491.22"
+          },
+          {
+            "code": "491.8"
+          },
+          {
+            "code": "491.9"
+          },
+          {
+            "code": "492"
+          },
+          {
+            "code": "492.0"
+          },
+          {
+            "code": "492.8"
+          },
+          {
+            "code": "493.2"
+          },
+          {
+            "code": "493.20"
+          },
+          {
+            "code": "493.21"
+          },
+          {
+            "code": "493.22"
+          },
+          {
+            "code": "496"
+          }
+        ]
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "concept": [
+          {
+            "code": "J41.0"
+          },
+          {
+            "code": "J41.1"
+          },
+          {
+            "code": "J41.8"
+          },
+          {
+            "code": "J42"
+          },
+          {
+            "code": "J43.0"
+          },
+          {
+            "code": "J43.1"
+          },
+          {
+            "code": "J43.2"
+          },
+          {
+            "code": "J43.8"
+          },
+          {
+            "code": "J43.9"
+          },
+          {
+            "code": "J44.0"
+          },
+          {
+            "code": "J44.1"
+          },
+          {
+            "code": "J44.9"
+          }
+        ]
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "concept": [
+          {
+            "code": "404684003"
+          }
+        ]
+      }
+    ]
+  }
+}
