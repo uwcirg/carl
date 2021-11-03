@@ -1,6 +1,7 @@
 import json
 import os
 from pytest import fixture
+from urllib.parse import urlencode
 
 from carl.modules.factories import deserialize_resource
 from carl.modules.codesystem import CodeSystem
@@ -26,10 +27,12 @@ def valueset_data(datadir):
 def test_deserialize_codesystem(codesystem_data):
     resource = deserialize_resource(codesystem_data)
     assert isinstance(resource, CodeSystem)
-    assert resource.search_url() == 'CodeSystem?url=http%3A%2F%2Fhl7.org%2Ffhir%2Fsid%2Ficd-10-cm'
+    encoded_url = urlencode(query={'url': "http://hl7.org/fhir/sid/icd-10-cm"})
+    assert resource.search_url() == f'CodeSystem?{encoded_url}'
 
 
 def test_deserialize_valueset(valueset_data):
     resource = deserialize_resource(valueset_data)
     assert isinstance(resource, ValueSet)
-    assert resource.search_url() == 'ValueSet?url=http%3A%2F%2Fcnics-cirg.washington.edu%2Ffhir%2FValueSet%2FCNICS-COPD-codings'
+    encoded_url = urlencode(query={'url': "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings"})
+    assert resource.search_url() == f'ValueSet?{encoded_url}'
