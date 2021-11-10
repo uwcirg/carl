@@ -41,55 +41,72 @@
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "concept": [
           {
-            "code": "491"
+            "code": "491",
+            "display": "491"
           },
           {
-            "code": "491.0"
+            "code": "491.0",
+            "display": "491.0"
           },
           {
-            "code": "491.1"
+            "code": "491.1",
+            "display": "491.1"
           },
           {
-            "code": "491.2"
+            "code": "491.2",
+            "display": "491.2"
           },
           {
-            "code": "491.20"
+            "code": "491.20",
+            "display": "491.20"
           },
           {
-            "code": "491.21"
+            "code": "491.21",
+            "display": "491.21"
           },
           {
-            "code": "491.22"
+            "code": "491.22",
+            "display": "491.22"
           },
           {
-            "code": "491.8"
+            "code": "491.8",
+            "display": "491.8"
           },
           {
-            "code": "491.9"
+            "code": "491.9",
+            "display": "491.9"
           },
           {
-            "code": "492"
+            "code": "492",
+            "display": "492"
           },
           {
-            "code": "492.0"
+            "code": "492.0",
+            "display": "492.0"
           },
           {
-            "code": "492.8"
+            "code": "492.8",
+            "display": "492.8"
           },
           {
-            "code": "493.2"
+            "code": "493.2",
+            "display": "493.2"
           },
           {
-            "code": "493.20"
+            "code": "493.20",
+            "display": "493.20"
           },
           {
-            "code": "493.21"
+            "code": "493.21",
+            "display": "493.21"
           },
           {
-            "code": "493.22"
+            "code": "493.22",
+            "display": "493.22"
           },
           {
-            "code": "496"
+            "code": "496",
+            "display": "496"
           }
         ]
       },
@@ -97,40 +114,52 @@
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "concept": [
           {
-            "code": "J41.0"
+            "code": "J41.0",
+            "display": "J41.0"
           },
           {
-            "code": "J41.1"
+            "code": "J41.1",
+            "display": "J41.1"
           },
           {
-            "code": "J41.8"
+            "code": "J41.8",
+            "display": "J41.8"
           },
           {
-            "code": "J42"
+            "code": "J42",
+            "display": "J42"
           },
           {
-            "code": "J43.0"
+            "code": "J43.0",
+            "display": "J43.0"
           },
           {
-            "code": "J43.1"
+            "code": "J43.1",
+            "display": "J43.1"
           },
           {
-            "code": "J43.2"
+            "code": "J43.2",
+            "display": "J43.2"
           },
           {
-            "code": "J43.8"
+            "code": "J43.8",
+            "display": "J43.8"
           },
           {
-            "code": "J43.9"
+            "code": "J43.9",
+            "display": "J43.9"
           },
           {
-            "code": "J44.0"
+            "code": "J44.0",
+            "display": "J44.0"
           },
           {
-            "code": "J44.1"
+            "code": "J44.1",
+            "display": "J44.1"
           },
           {
-            "code": "J44.9"
+            "code": "J44.9",
+            "display": "J44.9"
           }
         ]
       },
@@ -138,7 +167,8 @@
         "system": "http://snomed.info/sct",
         "concept": [
           {
-            "code": "404684003"
+            "code": "404684003",
+            "display": "404684003"
           }
         ]
       }
