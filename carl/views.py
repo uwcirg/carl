@@ -27,6 +27,7 @@ def bootstrap():
             except json.decoder.JSONDecodeError as je:
                 current_app.logger.error(f"{fname.path} contains invalid JSON")
                 current_app.logger.exception(je)
+                abort(400, f"Error in bootstrap, can't process {fname.path}")
 
             endpoint = fhir_url
             if data['resourceType'] != 'Bundle':
@@ -38,6 +39,7 @@ def bootstrap():
             current_app.logger.info(f"PUT {fname.name} to {endpoint}")
             response = requests.put(endpoint, json=data)
             current_app.logger.info(f"status {response.status_code}, text {response.text}")
+            response.raise_for_status()
 
 
 @base_blueprint.route('/')
@@ -75,3 +77,24 @@ def config_settings(config_key):
 
     return jsonify(settings)
 
+
+@base_blueprint.route('/process/<int:patient_id>')
+def process(patient_id):
+    from carl.logic.copd import COPD_VALUESET_URI, CNICS_COPD_coding, patient_has, persist_resource
+    from carl.modules.codeableconcept import CodeableConcept
+    from carl.modules.condition import Condition
+    from carl.modules.patient import Patient
+
+    current_app.logger.debug(f"launch process/{patient_id}")
+    positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
+    results = {
+        "patient_id": patient_id,
+        "COPD codings found": len(positive_codings) > 0}
+    if positive_codings:
+        condition = Condition()
+        condition.code = CodeableConcept(CNICS_COPD_coding)
+        condition.subject = Patient(patient_id)
+        response = persist_resource(resource=condition)
+        results['condition'] = response
+
+    return results
