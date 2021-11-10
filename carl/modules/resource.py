@@ -42,11 +42,15 @@ class Resource(object):
 
     def as_fhir(self):
         results = {'resourceType': self.RESOURCE_TYPE}
-        results.update(self._fields)
+        for field in self._fields:
+            if hasattr(self._fields[field], 'as_fhir'):
+                results[field] = self._fields[field].as_fhir()
+            else:
+                results[field] = self._fields[field]
         return results
 
     def search_url(self):
-        """Generate the request path search url for ValueSet
+        """Generate the request path search url for resource
 
         NB - this method does NOT invoke a round trip ID lookup.
         Call self.id() beforehand to force a lookup.
@@ -54,8 +58,23 @@ class Resource(object):
         if self._id:
             return f"{self.RESOURCE_TYPE}/{self._id}"
 
-        search_params = {}
-        for key in self.unique_params():
-            if key in self._fields:
-                search_params[key] = self._fields[key]
+        search_params = dict()
+        for field in self.unique_params():
+            # See if resource provides direct (overloaded) field access
+            attr = getattr(self, field, None)
+            if not attr:
+                # Otherwise, check in _fields
+                attr = self._fields.get(field, None)
+            if not attr:
+                # Not defined, skip
+                continue
+
+            # Some attributes include a `value_param()` method should
+            # specialization be needed when used in search params
+            if hasattr(attr, "value_param"):
+                value = getattr(attr, "value_param")()
+            else:
+                value = attr
+            search_params[field] = value
+
         return f"{self.RESOURCE_TYPE}?{urlencode(search_params)}"
