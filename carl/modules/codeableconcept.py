@@ -32,5 +32,5 @@ class CodeableConcept(object):
                 f"Require single coding to include {self} in search for value_param ")
 
         coding = self.codes[0]
-        return f"{coding.system}|{coding.code}")
+        return f"{coding.system}|{coding.code}"
 
