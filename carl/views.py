@@ -90,11 +90,13 @@ def process(patient_id):
     results = {
         "patient_id": patient_id,
         "COPD codings found": len(positive_codings) > 0}
-    if positive_codings:
-        condition = Condition()
-        condition.code = CodeableConcept(CNICS_COPD_coding)
-        condition.subject = Patient(patient_id)
-        response = persist_resource(resource=condition)
-        results['condition'] = response
+    if not positive_codings:
+        return results
+
+    condition = Condition()
+    condition.code = CodeableConcept(CNICS_COPD_coding)
+    condition.subject = Patient(patient_id)
+    response = persist_resource(resource=condition)
+    results['condition'] = response
 
     return results
