@@ -4,6 +4,9 @@ import requests
 
 from carl.config import FHIR_SERVER_URL
 from carl.modules.coding import Coding
+from carl.modules.codeableconcept import CodeableConcept
+from carl.modules.condition import Condition
+from carl.modules.patient import Patient
 from carl.modules.valueset import valueset_codings
 
 # ValueSet for all known COPD condition codings - should match "url" in:
@@ -12,9 +15,9 @@ COPD_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-c
 
 # Designated coding used to tag users eligible for COPD questionnaire
 CNICS_COPD_coding = Coding(
-    system="https://cnics-pro.cirg.washington.edu/fhir/codes",
-    code="COPD2021.11.001",
-    display="COPD questionnaire candidate")
+    system="https://cpro.cirg.washington.edu/groups",
+    code="CNICS.COPD2021.11.001",
+    display="COPD PRO group member")
 
 
 def patient_has(patient_id, value_set_uri):
@@ -25,7 +28,7 @@ def patient_has(patient_id, value_set_uri):
     search_params = {'patient': patient_id}
     url = f"{FHIR_SERVER_URL}Condition"
     response = requests.get(url, params=search_params)
-    current_app.logger.debug(f"Query HAPI: {response.url}")
+    current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
 
     patient_codings = set()
@@ -50,3 +53,26 @@ def persist_resource(resource):
     current_app.logger.debug(f"HAPI PUT: {response.url}")
     response.raise_for_status()
     return response.json()
+
+
+def process_4_COPD(patient_id):
+    """Process given patient for COPD
+
+    NB: generates side-effects, namely a special Condition is persisted in the
+    configured FHIR store for patients found to have a qualifying COPD Condition
+    """
+    current_app.logger.debug(f"process {patient_id} for COPD")
+    positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
+    results = {
+        "patient_id": patient_id,
+        "COPD codings found": len(positive_codings) > 0}
+    if not positive_codings:
+        return results
+
+    condition = Condition()
+    condition.code = CodeableConcept(CNICS_COPD_coding)
+    condition.subject = Patient(patient_id)
+    response = persist_resource(resource=condition)
+    results['condition'] = response
+
+    return results

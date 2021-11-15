@@ -1,6 +1,8 @@
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 
+from carl.logic.copd import process_4_COPD
+
 base_blueprint = Blueprint('base', __name__, cli_group=None)
 
 
@@ -48,25 +50,58 @@ def config_settings(config_key):
     return jsonify(settings)
 
 
-@base_blueprint.route('/process/<int:patient_id>')
-def process(patient_id):
-    from carl.logic.copd import COPD_VALUESET_URI, CNICS_COPD_coding, patient_has, persist_resource
-    from carl.modules.codeableconcept import CodeableConcept
-    from carl.modules.condition import Condition
-    from carl.modules.patient import Patient
+@base_blueprint.route('/classify/<int:patient_id>', methods=['PUT'])
+def classify(patient_id):
+    """Classify single patient as configured"""
+    return process_4_COPD(patient_id)
 
-    current_app.logger.debug(f"launch process/{patient_id}")
-    positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
-    results = {
-        "patient_id": patient_id,
-        "COPD codings found": len(positive_codings) > 0}
-    if not positive_codings:
-        return results
 
-    condition = Condition()
-    condition.code = CodeableConcept(CNICS_COPD_coding)
-    condition.subject = Patient(patient_id)
-    response = persist_resource(resource=condition)
-    results['condition'] = response
+def next_patient_bundle():
+    """Manage pages of patients, yielding bundles until exhausted"""
+    import jmespath
+    import requests
+    from carl.config import FHIR_SERVER_URL
 
-    return results
+    url = f"{FHIR_SERVER_URL}Patient"
+    response = requests.get(url=url)
+    current_app.logger.debug(f"HAPI GET: {response.url}")
+    response.raise_for_status()
+    bundle = response.json()
+    # yield first page
+    yield bundle
+
+    # continue yielding pages till exhausted
+    while True:
+        if 'entry' not in bundle:
+            return
+
+        # get next page
+        next_page_link = jmespath.search('link[?relation==`next`].{url: url}', bundle)
+        if not next_page_link:
+            return
+
+        response = requests.get(next_page_link)
+        current_app.logger.debug(f"HAPI GET: {response.url}")
+        response.raise_for_status()
+        bundle = response.json()
+        yield bundle
+
+
+@base_blueprint.route('/classify', methods=['PUT'])
+def classify_all():
+    """Classify all patients found"""
+    # Obtain batches of Patients, process each in turn
+    processed_patients = 0
+    conditioned_patients = 0
+    for bundle in next_patient_bundle():
+        assert bundle['resourceType'] == 'Bundle'
+        for item in bundle.get('entry', []):
+            assert item['resource']['resourceType'] == 'Patient'
+            results = process_4_COPD(item['resource']['id'])
+            processed_patients += 1
+            if 'condition' in results:
+                conditioned_patients += 1
+
+    return {
+        'processed_patients': processed_patients,
+        'conditioned_patients': conditioned_patients}
