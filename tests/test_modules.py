@@ -9,6 +9,7 @@ from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.coding import Coding
 from carl.modules.condition import Condition
 from carl.modules.codesystem import CodeSystem
+from carl.modules.paging import next_page_link_from_bundle, next_resource_bundle
 from carl.modules.patient import Patient
 from carl.modules.reference import Reference
 from carl.modules.valueset import ValueSet, valueset_codings
@@ -48,6 +49,11 @@ def copd_condition():
     cc.code = CodeableConcept(CNICS_COPD_coding)
     cc.subject = Patient(PATIENT_ID)
     return cc
+
+
+@fixture
+def patient_search_bundle(datadir):
+    return load_jsondata(datadir, 'patient_search.json')
 
 
 @fixture
@@ -105,3 +111,19 @@ def test_condition_as_fhir(copd_condition):
     fhir = copd_condition.as_fhir()
     assert set(fhir.keys()) == set(('resourceType', 'code', 'subject'))
     assert Reference(Patient(id=PATIENT_ID)).as_fhir() == fhir['subject']
+
+
+def test_paging(mocker, patient_search_bundle):
+
+    # mock first of many page results:
+    mocker.patch(
+        'carl.modules.paging.requests.get',
+        return_value=MockResponse(data=patient_search_bundle))
+
+    for bundle_page in next_resource_bundle('Patient'):
+        assert 'link' in bundle_page
+        break  # only first page returned from mocker
+
+    # obtain valid URL from bundle
+    url = next_page_link_from_bundle(bundle_page)
+    assert url.startswith('http://')
