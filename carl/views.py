@@ -1,5 +1,6 @@
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
+import click
 
 from carl.logic.copd import process_4_COPD
 from carl.modules.paging import next_resource_bundle
@@ -57,9 +58,7 @@ def classify(patient_id):
     return process_4_COPD(patient_id)
 
 
-
-
-@base_blueprint.route('/classify', methods=['PUT'])
+@base_blueprint.cli.command("classify")
 def classify_all():
     """Classify all patients found"""
     # Obtain batches of Patients, process each in turn
