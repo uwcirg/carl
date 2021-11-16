@@ -1,11 +1,7 @@
-import json
-import os
-
-import requests
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 
-from carl.modules.factories import deserialize_resource
+from carl.logic.copd import process_4_COPD
 
 base_blueprint = Blueprint('base', __name__, cli_group=None)
 
@@ -14,30 +10,8 @@ base_blueprint = Blueprint('base', __name__, cli_group=None)
 def bootstrap():
     """Run application initialization code"""
     # Load serialized data into FHIR store
-    fhir_url = current_app.config['FHIR_SERVER_URL']
-    if not fhir_url:
-        current_app.logger.warn("No config set for FHIR_SERVER_URL, can't load serialized data")
-        return
-
-    base_dir = os.path.join(current_app.root_path, "serialized")
-    for fname in (fname for fname in os.scandir(base_dir) if fname.name.lower().endswith('.json')):
-        with open(fname.path) as fhir:
-            try:
-                data = json.loads(fhir.read())
-            except json.decoder.JSONDecodeError as je:
-                current_app.logger.error(f"{fname.path} contains invalid JSON")
-                current_app.logger.exception(je)
-
-            endpoint = fhir_url
-            if data['resourceType'] != 'Bundle':
-                # For non bundles, PUT with search parameters to avoid
-                # duplicate resource creation
-                resource = deserialize_resource(data)
-                endpoint += resource.search_url()
-
-            current_app.logger.info(f"PUT {fname.name} to {endpoint}")
-            response = requests.put(endpoint, json=data)
-            current_app.logger.info(f"status {response.status_code}, text {response.text}")
+    from carl.serialized.upload import load_files
+    load_files()
 
 
 @base_blueprint.route('/')
@@ -75,3 +49,59 @@ def config_settings(config_key):
 
     return jsonify(settings)
 
+
+@base_blueprint.route('/classify/<int:patient_id>', methods=['PUT'])
+def classify(patient_id):
+    """Classify single patient as configured"""
+    return process_4_COPD(patient_id)
+
+
+def next_patient_bundle():
+    """Manage pages of patients, yielding bundles until exhausted"""
+    import jmespath
+    import requests
+    from carl.config import FHIR_SERVER_URL
+
+    url = f"{FHIR_SERVER_URL}Patient"
+    response = requests.get(url=url)
+    current_app.logger.debug(f"HAPI GET: {response.url}")
+    response.raise_for_status()
+    bundle = response.json()
+    # yield first page
+    yield bundle
+
+    # continue yielding pages till exhausted
+    while True:
+        if 'entry' not in bundle:
+            return
+
+        # get next page
+        next_page_link = jmespath.search('link[?relation==`next`].{url: url}', bundle)
+        if not next_page_link:
+            return
+
+        response = requests.get(next_page_link)
+        current_app.logger.debug(f"HAPI GET: {response.url}")
+        response.raise_for_status()
+        bundle = response.json()
+        yield bundle
+
+
+@base_blueprint.route('/classify', methods=['PUT'])
+def classify_all():
+    """Classify all patients found"""
+    # Obtain batches of Patients, process each in turn
+    processed_patients = 0
+    conditioned_patients = 0
+    for bundle in next_patient_bundle():
+        assert bundle['resourceType'] == 'Bundle'
+        for item in bundle.get('entry', []):
+            assert item['resource']['resourceType'] == 'Patient'
+            results = process_4_COPD(item['resource']['id'])
+            processed_patients += 1
+            if 'condition' in results:
+                conditioned_patients += 1
+
+    return {
+        'processed_patients': processed_patients,
+        'conditioned_patients': conditioned_patients}

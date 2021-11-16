@@ -1,4 +1,7 @@
 {
   "resourceType": "CodeSystem",
-  "url": "http://snomed.info/sct"
+  "url": "http://snomed.info/sct",
+  "concept": [
+    {"code": "J41.0", "display": "J41.0"}
+  ]
 }
