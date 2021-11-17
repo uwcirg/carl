@@ -1,6 +1,7 @@
+import click
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
-import click
+import timeit
 
 from carl.logic.copd import process_4_COPD
 from carl.modules.paging import next_resource_bundle
@@ -61,6 +62,8 @@ def classify(patient_id):
 @base_blueprint.cli.command("classify")
 def classify_all():
     """Classify all patients found"""
+    start = timeit.default_timer()
+
     # Obtain batches of Patients, process each in turn
     processed_patients = 0
     conditioned_patients = 0
@@ -73,6 +76,8 @@ def classify_all():
             if 'condition' in results:
                 conditioned_patients += 1
 
-    return {
+    duration = timeit.default_timer() - start
+    click.echo({
+        'duration': f"{duration:.4f} seconds",
         'processed_patients': processed_patients,
-        'conditioned_patients': conditioned_patients}
+        'conditioned_patients': conditioned_patients})
