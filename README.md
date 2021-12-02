@@ -1,17 +1,14 @@
 # CARL
-
 Named after Carl Linnaeus, considered by some as the "father of modern taxonimy", this project
-embodies a ``condition classifier``; a logic engine capable of acting on trigger events, querying
+embodies a `condition classifier`; a logic engine capable of acting on trigger events, querying
 an external FHIR store for state and generating conditions when appropriate, pushed back into
 the same external FHIR store.
 
 ## Conditions
-
 Start simple, in prototype style, with the intent to replace logic engine and related components
 as the need arises.
 
 ### COPD & COPD Exacerbated
-
 Determine if a Patient should receive a COPD Condition with the `cnics` namespace system
 by looking for at least one `coding` from the following known COPD Condition codings:
 
@@ -50,42 +47,35 @@ by looking for at least one `coding` from the following known COPD Condition cod
   - "code": "404684003"
 
 ## How To Run
-
-As a flask application, ``carl`` exposes HTTP routes as well as a number of command line
+As a flask application, `carl` exposes HTTP routes as well as a number of command line
 interface entry points.
 
 These instructions assume a docker-compose deployment.  Simply eliminate the leading `dc exec`
-portion of each command if deployed outside of a docker container.
-
-```alias dc='sudo docker-compose'```
+portion of each command if deployed outside a docker container.
 
 To view available HTTP routes:
-
 ```
-dc exec carl flask routes
+sudo docker-compose exec carl flask routes
 ```
 
 To view available CLI entry points:
-
 ```
-dc exec carl flask --help
+sudo docker-compose exec carl flask --help
 ```
 
-Especially useful for debugging or testing, obtain any single Patient ``_id`` from the configured
+Especially useful for debugging or testing, obtain any single Patient `_id` from the configured
 FHIR store, and process via:
-
 ```
 curl -X PUT http://localhost:5000/classify/<Patient._id>
 ```
 
 To process the entire set of Patient resources found in the configured FHIR store:
-
 ```
-dc exec carl flask classify
+sudo docker-compose run carl flask classify
 ```
 
 Complete example, captures both standard out and error to respective log files:
+```
+sudo docker-compose run carl flask classify > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
+```
 
-```
-dc exec carl flask classify > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
-```
