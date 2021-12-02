@@ -32,7 +32,9 @@ def valueset_codings(url):
     response = requests.get(resource_path, params=search_params)
     response.raise_for_status()
     bundle = response.json()
-    assert bundle['total'] == 1
+    if bundle['total'] != 1:
+        raise ValueError(
+            "Expected ValueSet {url} not found; Did `flask bootstrap` get called?")
 
     value_set = bundle['entry'][0]['resource']
     codings = set()
