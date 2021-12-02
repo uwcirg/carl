@@ -48,3 +48,44 @@ by looking for at least one `coding` from the following known COPD Condition cod
   - "code": "J44.9"
 - "system": "http://snomed.info/sct"
   - "code": "404684003"
+
+## How To Run
+
+As a flask application, ``carl`` exposes HTTP routes as well as a number of command line
+interface entry points.
+
+These instructions assume a docker-compose deployment.  Simply eliminate the leading `dc exec`
+portion of each command if deployed outside of a docker container.
+
+```alias dc='sudo docker-compose'```
+
+To view available HTTP routes:
+
+```
+dc exec carl flask routes
+```
+
+To view available CLI entry points:
+
+```
+dc exec carl flask --help
+```
+
+Especially useful for debugging or testing, obtain any single Patient ``_id`` from the configured
+FHIR store, and process via:
+
+```
+curl -X PUT http://localhost:5000/classify/<Patient._id>
+```
+
+To process the entire set of Patient resources found in the configured FHIR store:
+
+```
+dc exec carl flask classify
+```
+
+Complete example, captures both standard out and error to respective log files:
+
+```
+dc exec carl flask classify > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
+```
