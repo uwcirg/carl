@@ -9,7 +9,7 @@ from carl.modules.paging import next_resource_bundle
 base_blueprint = Blueprint('base', __name__, cli_group=None)
 
 
-@base_blueprint.before_app_first_request
+@base_blueprint.cli.command("bootstrap")
 def bootstrap():
     """Run application initialization code"""
     # Load serialized data into FHIR store
