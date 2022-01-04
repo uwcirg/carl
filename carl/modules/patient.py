@@ -17,7 +17,7 @@ class Patient(Resource):
     def value_param(self):
         """Akin to `search_url`, but to only return the value portion
 
-        Patients are often nested as "refernce" attributes.  When used
+        Patients are often nested as "reference" attributes.  When used
         in the value position of a query string, just the patient id is used.
 
         See also https://www.hl7.org/fhir/search.html#token
