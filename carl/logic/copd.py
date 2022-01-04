@@ -97,4 +97,5 @@ def process_4_COPD(patient_id):
     response = persist_resource(resource=condition)
     results['condition'] = response
 
+    current_app.logger.debug(results)
     return results
