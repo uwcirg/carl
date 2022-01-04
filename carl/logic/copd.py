@@ -24,9 +24,8 @@ CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/"
 
 def patient_canonical_identifier(patient_id):
     """Return system|value identifier if patient has one for preferred system"""
-    search_params = {'patient': patient_id}
-    url = f"{FHIR_SERVER_URL}Patient"
-    response = requests.get(url, params=search_params)
+    url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
+    response = requests.get(url)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
