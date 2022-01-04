@@ -82,10 +82,8 @@ def process_4_COPD(patient_id):
     """
     current_app.logger.debug(f"process {patient_id} for COPD")
     positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
-    # Obtain and use canonical identifier for comparisons across systems, if found
-    patient_id = patient_canonical_identifier(patient_id) or patient_id
     results = {
-        "patient_id": patient_id,
+        "patient_id": patient_canonical_identifier(patient_id) or patient_id,
         "COPD codings found": len(positive_codings) > 0}
     if not positive_codings:
         return results
