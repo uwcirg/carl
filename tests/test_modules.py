@@ -3,7 +3,7 @@ import os
 from pytest import fixture
 from urllib.parse import urlencode
 
-from carl.logic.copd import CNICS_COPD_coding
+from carl.logic.copd import CNICS_COPD_coding, patient_canonical_identifier
 from carl.modules.factories import deserialize_resource
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.coding import Coding
@@ -49,6 +49,11 @@ def copd_condition():
     cc.code = CodeableConcept(CNICS_COPD_coding)
     cc.subject = Patient(PATIENT_ID)
     return cc
+
+
+@fixture
+def patient_data(datadir):
+    return load_jsondata(datadir, 'patient.json')
 
 
 @fixture
@@ -127,3 +132,14 @@ def test_paging(mocker, patient_search_bundle):
     # obtain valid URL from bundle
     url = next_page_link_from_bundle(bundle_page)
     assert url.startswith('http://')
+
+
+def test_canonical_identifier(mocker, patient_data):
+
+    # mock HAPI result from patient lookup
+    mocker.patch(
+        'carl.logic.copd.requests.get',
+        return_value=MockResponse(data=patient_data))
+
+    found = patient_canonical_identifier(patient_id=1)
+    assert found == "https://cnics.cirg.washington.edu/|UW:517"

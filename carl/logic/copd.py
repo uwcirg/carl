@@ -1,5 +1,5 @@
 """COPD module"""
-from flask import current_app
+from flask import current_app, has_app_context
 import requests
 
 from carl.config import FHIR_SERVER_URL
@@ -18,6 +18,25 @@ CNICS_COPD_coding = Coding(
     system="https://cpro.cirg.washington.edu/groups",
     code="CNICS.COPD2021.11.001",
     display="COPD PRO group member")
+
+CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/"
+
+
+def patient_canonical_identifier(patient_id):
+    """Return system|value identifier if patient has one for preferred system"""
+    url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
+    response = requests.get(url)
+    if has_app_context():
+        current_app.logger.debug(f"HAPI GET: {response.url}")
+    response.raise_for_status()
+
+    match = [
+        f"{identifier['system']}|{identifier['value']}"
+        for identifier in response.json().get("identifier", [])
+        if identifier['system'] == CNICS_IDENTIFIER_SYSTEM]
+
+    if match:
+        return match[0]
 
 
 def patient_has(patient_id, value_set_uri):
@@ -64,7 +83,7 @@ def process_4_COPD(patient_id):
     current_app.logger.debug(f"process {patient_id} for COPD")
     positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
     results = {
-        "patient_id": patient_id,
+        "patient_id": patient_canonical_identifier(patient_id) or patient_id,
         "COPD codings found": len(positive_codings) > 0}
     if not positive_codings:
         return results
@@ -74,5 +93,7 @@ def process_4_COPD(patient_id):
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
     results['condition'] = response
+    results['intersection'] = [coding.as_fhir() for coding in positive_codings]
 
+    current_app.logger.debug(results)
     return results
