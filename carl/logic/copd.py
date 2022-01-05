@@ -6,6 +6,7 @@ from carl.config import FHIR_SERVER_URL
 from carl.modules.coding import Coding
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.condition import Condition
+from carl.modules.paging import next_resource_bundle
 from carl.modules.patient import Patient
 from carl.modules.valueset import valueset_codings
 
@@ -44,17 +45,13 @@ def patient_has(patient_id, value_set_uri):
 
     :returns: intersection of patient's condition codings and those in given ValueSet
     """
-    search_params = {'patient': patient_id}
-    url = f"{FHIR_SERVER_URL}Condition"
-    response = requests.get(url, params=search_params)
-    current_app.logger.debug(f"HAPI GET: {response.url}")
-    response.raise_for_status()
-
     patient_codings = set()
-    bundle = response.json()
-    for entry in bundle.get('entry', []):
-        for coding in entry['resource']['code']['coding']:
-            patient_codings.add(Coding(system=coding['system'], code=coding['code']))
+    for bundle in next_resource_bundle(
+            resource_type='Condition',
+            search_params={'subject': patient_id}):
+        for entry in bundle.get('entry', []):
+            for coding in entry['resource']['code']['coding']:
+                patient_codings.add(Coding(system=coding['system'], code=coding['code']))
 
     condition_codings = valueset_codings(value_set_uri)
     return patient_codings.intersection(condition_codings)
