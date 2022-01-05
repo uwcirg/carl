@@ -93,7 +93,7 @@ def process_4_COPD(patient_id):
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
     results['condition'] = response
-    results['intersection'] = positive_codings
+    results['intersection'] = [coding.as_fhir() for coding in positive_codings]
 
     current_app.logger.debug(results)
     return results
