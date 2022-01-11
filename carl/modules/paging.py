@@ -15,15 +15,16 @@ def next_page_link_from_bundle(bundle):
     return next_page_link[0][0]
 
 
-def next_resource_bundle(resourceType):
+def next_resource_bundle(resource_type, search_params=None):
     """Generate pages of search results, yielding bundles until exhausted
 
-    :param resourceType: string form of resource to look up, i.e. `Patient`
+    :param resource_type: string form of resource to look up, i.e. `Patient`
+    :param search_params: optional search criteria to filter or order results
     :returns: bundle per page until exhausted
     """
 
-    url = f"{FHIR_SERVER_URL}{resourceType}"
-    response = requests.get(url=url)
+    url = f"{FHIR_SERVER_URL}{resource_type}"
+    response = requests.get(url=url, params=search_params)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
