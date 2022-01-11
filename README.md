@@ -66,7 +66,7 @@ sudo docker-compose exec carl flask --help
 Especially useful for debugging or testing, obtain any single Patient `_id` from the configured
 FHIR store, and process via:
 ```
-curl -X PUT http://localhost:5000/classify/<Patient._id>
+curl -X PUT http://localhost:5000/classify/<Patient._id>/<site>
 ```
 
 To process the entire set of Patient resources found in the configured FHIR store:
@@ -74,8 +74,8 @@ To process the entire set of Patient resources found in the configured FHIR stor
 sudo docker-compose run carl flask classify
 ```
 
-Complete example, captures both standard out and error to respective log files:
+Complete example for site `uw`, captures both standard out and error to respective log files:
 ```
-sudo docker-compose run carl flask classify > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
+sudo docker-compose run carl flask classify uw > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
 ```
 

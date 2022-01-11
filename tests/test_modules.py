@@ -141,5 +141,5 @@ def test_canonical_identifier(mocker, patient_data):
         'carl.logic.copd.requests.get',
         return_value=MockResponse(data=patient_data))
 
-    found = patient_canonical_identifier(patient_id=1)
-    assert found == "https://cnics.cirg.washington.edu/|UW:517"
+    found = patient_canonical_identifier(patient_id=1, site_code="uw")
+    assert found == "https://cnics.cirg.washington.edu/site-patient-id/uw|UW:517"

@@ -29,7 +29,7 @@
     "valueCode": "M"
   } ],
   "identifier": [ {
-    "system": "https://cnics.cirg.washington.edu/",
+    "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
     "value": "UW:517"
   } ],
   "gender": "male"

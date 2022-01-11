@@ -20,10 +20,10 @@ CNICS_COPD_coding = Coding(
     code="CNICS.COPD2021.11.001",
     display="COPD PRO group member")
 
-CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/"
+CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/site-patient-id/"
 
 
-def patient_canonical_identifier(patient_id):
+def patient_canonical_identifier(patient_id, site_code):
     """Return system|value identifier if patient has one for preferred system"""
     url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
     response = requests.get(url)
@@ -34,7 +34,7 @@ def patient_canonical_identifier(patient_id):
     match = [
         f"{identifier['system']}|{identifier['value']}"
         for identifier in response.json().get("identifier", [])
-        if identifier['system'] == CNICS_IDENTIFIER_SYSTEM]
+        if identifier['system'] == CNICS_IDENTIFIER_SYSTEM + site_code]
 
     if match:
         return match[0]
@@ -71,7 +71,7 @@ def persist_resource(resource):
     return response.json()
 
 
-def process_4_COPD(patient_id):
+def process_4_COPD(patient_id, site_code):
     """Process given patient for COPD
 
     NB: generates side-effects, namely a special Condition is persisted in the
@@ -80,7 +80,7 @@ def process_4_COPD(patient_id):
     current_app.logger.debug(f"process {patient_id} for COPD")
     positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
     results = {
-        "patient_id": patient_canonical_identifier(patient_id) or patient_id,
+        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
         "COPD codings found": len(positive_codings) > 0}
     if not positive_codings:
         return results
