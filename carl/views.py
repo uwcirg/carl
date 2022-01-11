@@ -69,7 +69,10 @@ def classify_all(site):
     processed_patients = 0
     conditioned_patients = 0
     patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
-    for bundle in next_resource_bundle('Patient', search_params={'identifier': patient_identifier_system}):
+    # To query on system portion only of an identifier, must include
+    # trailing '|' used customarily to delimit `system|value`
+    search_params = {'identifier': patient_identifier_system + '|'}
+    for bundle in next_resource_bundle('Patient', search_params=search_params):
         assert bundle['resourceType'] == 'Bundle'
         for item in bundle.get('entry', []):
             assert item['resource']['resourceType'] == 'Patient'
