@@ -58,7 +58,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:8585"
       } ],
       "gender": "male"
@@ -112,7 +112,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:2335"
       } ],
       "gender": "male"
@@ -166,7 +166,7 @@
         "valueCode": "F"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:3504"
       } ],
       "gender": "female"
@@ -220,7 +220,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:6731"
       } ],
       "gender": "male"
@@ -261,7 +261,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:1971"
       } ],
       "gender": "male"
@@ -315,7 +315,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:10792"
       } ],
       "gender": "male"
@@ -369,7 +369,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:9398"
       } ],
       "gender": "male"
@@ -423,7 +423,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:4537"
       } ],
       "gender": "male"
@@ -477,7 +477,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:6374"
       } ],
       "gender": "male"
@@ -518,7 +518,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:1104"
       } ],
       "gender": "male"
@@ -572,7 +572,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:4889"
       } ],
       "gender": "male"
@@ -613,7 +613,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:8911"
       } ],
       "gender": "male"
@@ -654,7 +654,7 @@
         "valueCode": "F"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:1934"
       } ],
       "gender": "female"
@@ -708,7 +708,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:3920"
       } ],
       "gender": "male"
@@ -762,7 +762,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:10225"
       } ],
       "gender": "male"
@@ -816,7 +816,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:7745"
       } ],
       "gender": "male"
@@ -870,7 +870,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:6296"
       } ],
       "gender": "male"
@@ -924,7 +924,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:8464"
       } ],
       "gender": "male"
@@ -978,7 +978,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:4885"
       } ],
       "gender": "male"
@@ -1032,7 +1032,7 @@
         "valueCode": "M"
       } ],
       "identifier": [ {
-        "system": "https://cnics.cirg.washington.edu/",
+        "system": "https://cnics.cirg.washington.edu/site-patient-id/uw",
         "value": "UW:6989"
       } ],
       "gender": "male"

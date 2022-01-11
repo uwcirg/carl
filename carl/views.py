@@ -3,7 +3,7 @@ from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 import timeit
 
-from carl.logic.copd import process_4_COPD
+from carl.logic.copd import CNICS_IDENTIFIER_SYSTEM, process_4_COPD
 from carl.modules.paging import next_resource_bundle
 
 base_blueprint = Blueprint('base', __name__, cli_group=None)
@@ -53,25 +53,30 @@ def config_settings(config_key):
     return jsonify(settings)
 
 
-@base_blueprint.route('/classify/<int:patient_id>', methods=['PUT'])
-def classify(patient_id):
+@base_blueprint.route('/classify/<int:patient_id>/<string:site_code>', methods=['PUT'])
+def classify(patient_id, site_code):
     """Classify single patient as configured"""
-    return process_4_COPD(patient_id)
+    return process_4_COPD(patient_id, site_code)
 
 
 @base_blueprint.cli.command("classify")
-def classify_all():
+@click.argument('site')
+def classify_all(site):
     """Classify all patients found"""
     start = timeit.default_timer()
 
-    # Obtain batches of Patients, process each in turn
+    # Obtain batches of Patients with matching site identifier, process each in turn
     processed_patients = 0
     conditioned_patients = 0
-    for bundle in next_resource_bundle('Patient'):
+    patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
+    # To query on system portion only of an identifier, must include
+    # trailing '|' used customarily to delimit `system|value`
+    search_params = {'identifier': patient_identifier_system + '|'}
+    for bundle in next_resource_bundle('Patient', search_params=search_params):
         assert bundle['resourceType'] == 'Bundle'
         for item in bundle.get('entry', []):
             assert item['resource']['resourceType'] == 'Patient'
-            results = process_4_COPD(item['resource']['id'])
+            results = process_4_COPD(item['resource']['id'], site)
             processed_patients += 1
             if 'condition' in results:
                 conditioned_patients += 1
@@ -79,5 +84,6 @@ def classify_all():
     duration = timeit.default_timer() - start
     click.echo({
         'duration': f"{duration:.4f} seconds",
+        'patient_identifier_system': patient_identifier_system,
         'processed_patients': processed_patients,
         'conditioned_patients': conditioned_patients})
