@@ -133,14 +133,6 @@
             "code": "J44.9"
           }
         ]
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "concept": [
-          {
-            "code": "404684003"
-          }
-        ]
       }
     ]
   }
