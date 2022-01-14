@@ -123,8 +123,7 @@ def remove_COPD_classification(patient_id, site_code):
     configured FHIR store for patients found to have previously gained said Condition
     """
     current_app.logger.debug(f"declassify {patient_id} of COPD")
-    classified_COPD_coding = set(
-        [Coding(system=CNICS_COPD_coding.system, code=CNICS_COPD_coding.code)])
+    classified_COPD_coding = set([CNICS_COPD_coding])
     previously_classified = patient_has(
         patient_id=patient_id, condition_codings=classified_COPD_coding)
     results = {
