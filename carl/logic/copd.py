@@ -124,7 +124,7 @@ def remove_COPD_classification(patient_id, site_code):
     """
     current_app.logger.debug(f"declassify {patient_id} of COPD")
     classified_COPD_coding = set(
-        [Coding(system=CNICS_COPD_coding['system'], code=CNICS_COPD_coding['code'])])
+        [Coding(system=CNICS_COPD_coding.system, code=CNICS_COPD_coding.code)])
     previously_classified = patient_has(
         patient_id=patient_id, condition_codings=classified_COPD_coding)
     results = {
