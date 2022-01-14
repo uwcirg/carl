@@ -104,7 +104,7 @@ def process_4_COPD(patient_id, site_code):
     condition.code = CodeableConcept(CNICS_COPD_coding)
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
-    results['changed'] = True
+    results['matched'] = True
     results['condition'] = response
     results['intersection'] = [coding.as_fhir() for coding in positive_codings]
 
@@ -136,7 +136,7 @@ def remove_COPD_classification(patient_id, site_code):
     condition.code = CodeableConcept(CNICS_COPD_coding)
     condition.subject = Patient(patient_id)
     delete_resource(resource=condition)
-    results['changed'] = True
+    results['matched'] = True
 
     current_app.logger.debug(results)
     return results

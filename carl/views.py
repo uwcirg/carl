@@ -89,7 +89,7 @@ def process_patients(process_function, site):
             assert item['resource']['resourceType'] == 'Patient'
             results = process_function(patient_id=item['resource']['id'], site_code=site)
             processed_patients += 1
-            if results.get('match', False):
+            if results.get('matched', False):
                 matched_patients += 1
 
     duration = timeit.default_timer() - start
