@@ -40,10 +40,10 @@ def patient_canonical_identifier(patient_id, site_code):
         return match[0]
 
 
-def patient_has(patient_id, value_set_uri):
-    """Determine if given patient has condition defined by given ValueSet
+def patient_has(patient_id, condition_codings):
+    """Determine if given patient has at least one condition in given codings
 
-    :returns: intersection of patient's condition codings and those in given ValueSet
+    :returns: intersection of patient's condition codings and those given
     """
     patient_codings = set()
     for bundle in next_resource_bundle(
@@ -53,8 +53,21 @@ def patient_has(patient_id, value_set_uri):
             for coding in entry['resource']['code']['coding']:
                 patient_codings.add(Coding(system=coding['system'], code=coding['code']))
 
-    condition_codings = valueset_codings(value_set_uri)
     return patient_codings.intersection(condition_codings)
+
+
+def delete_resource(resource):
+    """Delete given resource from FHIR_SERVER_URL
+
+    NB - this doesn't round-trip check if given resource already exists,
+    but rather does a DELETE with necessary search params to prevent duplicate
+    writes.  AKA conditional delete: https://www.hl7.org/fhir/http.html#cond-delete
+    """
+    url = f"{FHIR_SERVER_URL}{resource.search_url()}"
+    response = requests.delete(url=url, json=resource.as_fhir())
+    current_app.logger.debug(f"HAPI DELETE: {response.url}")
+    response.raise_for_status()
+    return response.json()
 
 
 def persist_resource(resource):
@@ -78,7 +91,9 @@ def process_4_COPD(patient_id, site_code):
     configured FHIR store for patients found to have a qualifying COPD Condition
     """
     current_app.logger.debug(f"process {patient_id} for COPD")
-    positive_codings = patient_has(patient_id=patient_id, value_set_uri=COPD_VALUESET_URI)
+    condition_codings = valueset_codings(COPD_VALUESET_URI)
+    positive_codings = patient_has(
+        patient_id=patient_id, condition_codings=condition_codings)
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
         "COPD codings found": len(positive_codings) > 0}
@@ -89,8 +104,40 @@ def process_4_COPD(patient_id, site_code):
     condition.code = CodeableConcept(CNICS_COPD_coding)
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
+    results['changed'] = True
     results['condition'] = response
     results['intersection'] = [coding.as_fhir() for coding in positive_codings]
+
+    current_app.logger.debug(results)
+    return results
+
+
+def remove_COPD_classification(patient_id, site_code):
+    """declassify given patient, i.e. remove added COPD Condition
+
+    Function used to reset or declassify patients previously found to have COPD,
+    this will remove the special Condition added during the classification step,
+    if found from the given patient.
+
+    NB: generates side-effects, namely a special Condition is removed from the
+    configured FHIR store for patients found to have previously gained said Condition
+    """
+    current_app.logger.debug(f"declassify {patient_id} of COPD")
+    classified_COPD_coding = set(
+        [Coding(system=CNICS_COPD_coding['system'], code=CNICS_COPD_coding['code'])])
+    previously_classified = patient_has(
+        patient_id=patient_id, condition_codings=classified_COPD_coding)
+    results = {
+        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
+        "COPD classification found": len(previously_classified) > 0}
+    if not previously_classified:
+        return results
+
+    condition = Condition()
+    condition.code = CodeableConcept(CNICS_COPD_coding)
+    condition.subject = Patient(patient_id)
+    delete_resource(resource=condition)
+    results['changed'] = True
 
     current_app.logger.debug(results)
     return results

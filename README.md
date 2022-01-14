@@ -43,8 +43,6 @@ by looking for at least one `coding` from the following known COPD Condition cod
   - "code": "J44.0"
   - "code": "J44.1"
   - "code": "J44.9"
-- "system": "http://snomed.info/sct"
-  - "code": "404684003"
 
 ## How To Run
 As a flask application, `carl` exposes HTTP routes as well as a number of command line
@@ -55,12 +53,12 @@ portion of each command if deployed outside a docker container.
 
 To view available HTTP routes:
 ```
-sudo docker-compose exec carl flask routes
+docker-compose exec carl flask routes
 ```
 
 To view available CLI entry points:
 ```
-sudo docker-compose exec carl flask --help
+docker-compose exec carl flask --help
 ```
 
 Especially useful for debugging or testing, obtain any single Patient `_id` from the configured
@@ -71,11 +69,15 @@ curl -X PUT http://localhost:5000/classify/<Patient._id>/<site>
 
 To process the entire set of Patient resources found in the configured FHIR store:
 ```
-sudo docker-compose run carl flask classify
+docker-compose run carl flask classify
+```
+
+To reset, that is remove conditions added from previous runs:
+```
+docker-compose run carl flask declassify
 ```
 
 Complete example for site `uw`, captures both standard out and error to respective log files:
 ```
-sudo docker-compose run carl flask classify uw > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
+docker-compose run carl flask classify uw > /var/log/cnics_to_fhir/carl.out 2> /var/log/cnics_to_fhir/carl.err
 ```
-

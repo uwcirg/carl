@@ -3,7 +3,7 @@ from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 import timeit
 
-from carl.logic.copd import CNICS_IDENTIFIER_SYSTEM, process_4_COPD
+from carl.logic.copd import CNICS_IDENTIFIER_SYSTEM, process_4_COPD, remove_COPD_classification
 from carl.modules.paging import next_resource_bundle
 
 base_blueprint = Blueprint('base', __name__, cli_group=None)
@@ -63,11 +63,22 @@ def classify(patient_id, site_code):
 @click.argument('site')
 def classify_all(site):
     """Classify all patients found"""
+    return process_patients(process_4_COPD, site)
+
+
+@base_blueprint.cli.command("declassify")
+@click.argument('site')
+def declassify_all(site):
+    """Clear the (potentially) persisted COPD condition generated during classify"""
+    return process_patients(remove_COPD_classification, site)
+
+
+def process_patients(process_function, site):
     start = timeit.default_timer()
 
-    # Obtain batches of Patients with matching site identifier, process each in turn
+    # Obtain batches of Patients with site identifier, process each in turn
     processed_patients = 0
-    conditioned_patients = 0
+    matched_patients = 0
     patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
     # To query on system portion only of an identifier, must include
     # trailing '|' used customarily to delimit `system|value`
@@ -76,14 +87,14 @@ def classify_all(site):
         assert bundle['resourceType'] == 'Bundle'
         for item in bundle.get('entry', []):
             assert item['resource']['resourceType'] == 'Patient'
-            results = process_4_COPD(item['resource']['id'], site)
+            results = process_function(patient_id=item['resource']['id'], site_code=site)
             processed_patients += 1
-            if 'condition' in results:
-                conditioned_patients += 1
+            if results.get('match', False):
+                matched_patients += 1
 
     duration = timeit.default_timer() - start
     click.echo({
         'duration': f"{duration:.4f} seconds",
         'patient_identifier_system': patient_identifier_system,
         'processed_patients': processed_patients,
-        'conditioned_patients': conditioned_patients})
+        'matched_patients': matched_patients})
