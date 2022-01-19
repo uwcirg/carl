@@ -35,7 +35,7 @@ def load_files():
                 endpoint += resource.search_url()
 
             current_app.logger.info(f"PUT {fname.name} to {endpoint}")
-            response = requests.put(endpoint, json=data)
+            response = requests.put(endpoint, json=data, timeout=30)
             current_app.logger.info(
                 f"status {response.status_code}, text {response.text}"
             )
