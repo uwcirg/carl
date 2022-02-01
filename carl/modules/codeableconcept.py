@@ -11,7 +11,7 @@ class CodeableConcept(object):
         return set(self.codes) == set(other.codes)
 
     def as_fhir(self):
-        return {'coding': [c.as_fhir() for c in self.codes]}
+        return {"coding": [c.as_fhir() for c in self.codes]}
 
     def value_param(self):
         """Akin to `search_url`, but to only return the value portion
@@ -29,8 +29,8 @@ class CodeableConcept(object):
         """
         if len(self.codes) != 1:
             raise ValueError(
-                f"Require single coding to include {self} in search for value_param ")
+                f"Require single coding to include {self} in search for value_param "
+            )
 
         coding = self.codes[0]
         return f"{coding.system}|{coding.code}"
-

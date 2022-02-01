@@ -18,7 +18,8 @@ COPD_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-c
 CNICS_COPD_coding = Coding(
     system="https://cpro.cirg.washington.edu/groups",
     code="CNICS.COPD2021.11.001",
-    display="COPD PRO group member")
+    display="COPD PRO group member",
+)
 
 CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/site-patient-id/"
 
@@ -34,7 +35,8 @@ def patient_canonical_identifier(patient_id, site_code):
     match = [
         f"{identifier['system']}|{identifier['value']}"
         for identifier in response.json().get("identifier", [])
-        if identifier['system'] == CNICS_IDENTIFIER_SYSTEM + site_code]
+        if identifier["system"] == CNICS_IDENTIFIER_SYSTEM + site_code
+    ]
 
     if match:
         return match[0]
@@ -47,11 +49,13 @@ def patient_has(patient_id, condition_codings):
     """
     patient_codings = set()
     for bundle in next_resource_bundle(
-            resource_type='Condition',
-            search_params={'subject': patient_id}):
-        for entry in bundle.get('entry', []):
-            for coding in entry['resource']['code']['coding']:
-                patient_codings.add(Coding(system=coding['system'], code=coding['code']))
+        resource_type="Condition", search_params={"subject": patient_id}
+    ):
+        for entry in bundle.get("entry", []):
+            for coding in entry["resource"]["code"]["coding"]:
+                patient_codings.add(
+                    Coding(system=coding["system"], code=coding["code"])
+                )
 
     return patient_codings.intersection(condition_codings)
 
@@ -93,10 +97,12 @@ def process_4_COPD(patient_id, site_code):
     current_app.logger.debug(f"process {patient_id} for COPD")
     condition_codings = valueset_codings(COPD_VALUESET_URI)
     positive_codings = patient_has(
-        patient_id=patient_id, condition_codings=condition_codings)
+        patient_id=patient_id, condition_codings=condition_codings
+    )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
-        "COPD codings found": len(positive_codings) > 0}
+        "COPD codings found": len(positive_codings) > 0,
+    }
     if not positive_codings:
         return results
 
@@ -104,9 +110,9 @@ def process_4_COPD(patient_id, site_code):
     condition.code = CodeableConcept(CNICS_COPD_coding)
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
-    results['matched'] = True
-    results['condition'] = response
-    results['intersection'] = [coding.as_fhir() for coding in positive_codings]
+    results["matched"] = True
+    results["condition"] = response
+    results["intersection"] = [coding.as_fhir() for coding in positive_codings]
 
     current_app.logger.debug(results)
     return results
@@ -125,10 +131,12 @@ def remove_COPD_classification(patient_id, site_code):
     current_app.logger.debug(f"declassify {patient_id} of COPD")
     classified_COPD_coding = set([CNICS_COPD_coding])
     previously_classified = patient_has(
-        patient_id=patient_id, condition_codings=classified_COPD_coding)
+        patient_id=patient_id, condition_codings=classified_COPD_coding
+    )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
-        "COPD classification found": len(previously_classified) > 0}
+        "COPD classification found": len(previously_classified) > 0,
+    }
     if not previously_classified:
         return results
 
@@ -136,7 +144,7 @@ def remove_COPD_classification(patient_id, site_code):
     condition.code = CodeableConcept(CNICS_COPD_coding)
     condition.subject = Patient(patient_id)
     delete_resource(resource=condition)
-    results['matched'] = True
+    results["matched"] = True
 
     current_app.logger.debug(results)
     return results

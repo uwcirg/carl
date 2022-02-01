@@ -8,7 +8,7 @@ def deserialize_resource(data):
     # Cycle through known resource classes, looking for match to instantiate
     resource = None
     for cls in CodeSystem, ValueSet:
-        if cls.RESOURCE_TYPE == data['resourceType']:
+        if cls.RESOURCE_TYPE == data["resourceType"]:
             assert resource is None
             resource = cls.from_fhir(data)
 

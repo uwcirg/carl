@@ -25,25 +25,30 @@ class Resource(object):
 
         # Round-trip to see if this represents a new or existing resource
         if FHIR_SERVER_URL:
-            headers = {'Cache-Control': 'no-cache'}
-            response = requests.get('/'.join((FHIR_SERVER_URL, self.search_url())), headers=headers)
+            headers = {"Cache-Control": "no-cache"}
+            response = requests.get(
+                "/".join((FHIR_SERVER_URL, self.search_url())), headers=headers
+            )
             response.raise_for_status()
 
             # extract Resource.id from bundle
             bundle = response.json()
-            if bundle['total']:
-                if bundle['total'] > 1:
+            if bundle["total"]:
+                if bundle["total"] > 1:
                     raise RuntimeError(
                         "Found multiple matches, can't generate upsert"
-                        f"for {self.search_url()}")
-                assert bundle['entry'][0]['resource']['resourceType'] == self.RESOURCE_TYPE
-                self._id = bundle['entry'][0]['resource']['id']
+                        f"for {self.search_url()}"
+                    )
+                assert (
+                    bundle["entry"][0]["resource"]["resourceType"] == self.RESOURCE_TYPE
+                )
+                self._id = bundle["entry"][0]["resource"]["id"]
         return self._id
 
     def as_fhir(self):
-        results = {'resourceType': self.RESOURCE_TYPE}
+        results = {"resourceType": self.RESOURCE_TYPE}
         for field in self._fields:
-            if hasattr(self._fields[field], 'as_fhir'):
+            if hasattr(self._fields[field], "as_fhir"):
                 results[field] = self._fields[field].as_fhir()
             else:
                 results[field] = self._fields[field]
