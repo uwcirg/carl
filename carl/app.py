@@ -1,11 +1,9 @@
 from flask import Flask
 import logging
-from pythonjsonlogger.jsonlogger import JsonFormatter
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from carl.audit import audit_log_init, audit_entry
 from carl.views import base_blueprint
-from carl.logserverhandler import LogServerHandler
 
 
 def create_app(testing=False, cli=False):

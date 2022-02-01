@@ -1,8 +1,4 @@
 """FHIR ValueSet module"""
-import requests
-
-from carl.config import FHIR_SERVER_URL
-from carl.modules.coding import Coding
 from carl.modules.resource import Resource
 
 
