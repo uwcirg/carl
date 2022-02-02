@@ -30,7 +30,7 @@ def valueset_codings(url):
     """Obtain set of codings in matching ValueSet by url field"""
     search_params = {"url": url}
     resource_path = f"{FHIR_SERVER_URL}ValueSet"
-    response = requests.get(resource_path, params=search_params)
+    response = requests.get(resource_path, params=search_params, timeout=30)
     response.raise_for_status()
     bundle = response.json()
     if bundle["total"] != 1:

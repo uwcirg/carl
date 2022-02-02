@@ -27,7 +27,7 @@ CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/site-patient-id/"
 def patient_canonical_identifier(patient_id, site_code):
     """Return system|value identifier if patient has one for preferred system"""
     url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
@@ -68,7 +68,7 @@ def delete_resource(resource):
     writes.  AKA conditional delete: https://www.hl7.org/fhir/http.html#cond-delete
     """
     url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.delete(url=url, json=resource.as_fhir())
+    response = requests.delete(url=url, json=resource.as_fhir(), timeout=30)
     current_app.logger.debug(f"HAPI DELETE: {response.url}")
     response.raise_for_status()
     return response.json()
@@ -82,7 +82,7 @@ def persist_resource(resource):
     writes.  AKA conditional update: https://www.hl7.org/fhir/http.html#cond-update
     """
     url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.put(url=url, json=resource.as_fhir())
+    response = requests.put(url=url, json=resource.as_fhir(), timeout=30)
     current_app.logger.debug(f"HAPI PUT: {response.url}")
     response.raise_for_status()
     return response.json()

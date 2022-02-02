@@ -24,7 +24,7 @@ def next_resource_bundle(resource_type, search_params=None):
     """
 
     url = f"{FHIR_SERVER_URL}{resource_type}"
-    response = requests.get(url=url, params=search_params)
+    response = requests.get(url=url, params=search_params, timeout=30)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
@@ -42,7 +42,7 @@ def next_resource_bundle(resource_type, search_params=None):
         if not next_page_link:
             return
 
-        response = requests.get(next_page_link)
+        response = requests.get(next_page_link, timeout=30)
         current_app.logger.debug(f"HAPI GET: {response.url}")
         response.raise_for_status()
         bundle = response.json()

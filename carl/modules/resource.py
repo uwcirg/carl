@@ -27,7 +27,9 @@ class Resource(object):
         if FHIR_SERVER_URL:
             headers = {"Cache-Control": "no-cache"}
             response = requests.get(
-                "/".join((FHIR_SERVER_URL, self.search_url())), headers=headers
+                "/".join((FHIR_SERVER_URL, self.search_url())),
+                headers=headers,
+                timeout=30,
             )
             response.raise_for_status()
 
