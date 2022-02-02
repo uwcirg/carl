@@ -1,14 +1,11 @@
 """FHIR ValueSet module"""
-import requests
-
-from carl.config import FHIR_SERVER_URL
-from carl.modules.coding import Coding
 from carl.modules.resource import Resource
 
 
 class Patient(Resource):
     """FHIR Patient - used for (de)serializing and queries"""
-    RESOURCE_TYPE = 'Patient'
+
+    RESOURCE_TYPE = "Patient"
 
     def __init__(self, id=None):
         super().__init__()

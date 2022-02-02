@@ -1,5 +1,6 @@
 class Reference(object):
     """FHIR Referenced resource wrapper"""
+
     def __init__(self, ref):
         self.ref = ref
 

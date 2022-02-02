@@ -14,11 +14,12 @@ from carl.modules.patient import Patient
 from carl.modules.reference import Reference
 from carl.modules.valueset import ValueSet, valueset_codings
 
-PATIENT_ID = 'def123'
+PATIENT_ID = "def123"
 
 
 class MockResponse(object):
     """Wrap data in response like object"""
+
     def __init__(self, data, status_code=200):
         self.data = data
         self.status_code = status_code
@@ -33,14 +34,14 @@ class MockResponse(object):
 
 
 def load_jsondata(datadir, filename):
-    with open(os.path.join(datadir, filename), 'r') as jsonfile:
+    with open(os.path.join(datadir, filename), "r") as jsonfile:
         data = json.load(jsonfile)
     return data
 
 
 @fixture
 def codesystem_data(datadir):
-    return load_jsondata(datadir, 'codesystem.json')
+    return load_jsondata(datadir, "codesystem.json")
 
 
 @fixture
@@ -53,44 +54,49 @@ def copd_condition():
 
 @fixture
 def patient_data(datadir):
-    return load_jsondata(datadir, 'patient.json')
+    return load_jsondata(datadir, "patient.json")
 
 
 @fixture
 def patient_search_bundle(datadir):
-    return load_jsondata(datadir, 'patient_search.json')
+    return load_jsondata(datadir, "patient_search.json")
 
 
 @fixture
 def valueset_bundle(datadir):
-    return load_jsondata(datadir, 'valueset_bundle.json')
+    return load_jsondata(datadir, "valueset_bundle.json")
 
 
 @fixture
 def valueset_data(datadir):
-    return load_jsondata(datadir, 'valueset.json')
+    return load_jsondata(datadir, "valueset.json")
 
 
 def test_deserialize_codesystem(codesystem_data):
     resource = deserialize_resource(codesystem_data)
     assert isinstance(resource, CodeSystem)
-    encoded_url = urlencode(query={'url': "http://hl7.org/fhir/sid/icd-10-cm"})
-    assert resource.search_url() == f'CodeSystem?{encoded_url}'
+    encoded_url = urlencode(query={"url": "http://hl7.org/fhir/sid/icd-10-cm"})
+    assert resource.search_url() == f"CodeSystem?{encoded_url}"
 
 
 def test_deserialize_valueset(valueset_data):
     resource = deserialize_resource(valueset_data)
     assert isinstance(resource, ValueSet)
-    encoded_url = urlencode(query={'url': "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings"})
-    assert resource.search_url() == f'ValueSet?{encoded_url}'
+    encoded_url = urlencode(
+        query={
+            "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings"
+        }
+    )
+    assert resource.search_url() == f"ValueSet?{encoded_url}"
 
 
 def test_valueset_codings(mocker, valueset_bundle):
 
     # fake HAPI round trip call w/i valueset_codings()
     mocker.patch(
-        'carl.modules.valueset.requests.get',
-        return_value=MockResponse(data=valueset_bundle))
+        "carl.modules.valueset.requests.get",
+        return_value=MockResponse(data=valueset_bundle),
+    )
 
     vs_url = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings"
     codings = valueset_codings(vs_url)
@@ -106,40 +112,44 @@ def test_valueset_codings(mocker, valueset_bundle):
 
 def test_COPD_condition_patient(copd_condition):
     assert copd_condition.code == CodeableConcept(CNICS_COPD_coding)
-    params = urlencode({
-        'code': f"{CNICS_COPD_coding.system}|{CNICS_COPD_coding.code}",
-        'subject': PATIENT_ID})
-    assert copd_condition.search_url() == f'Condition?{params}'
+    params = urlencode(
+        {
+            "code": f"{CNICS_COPD_coding.system}|{CNICS_COPD_coding.code}",
+            "subject": PATIENT_ID,
+        }
+    )
+    assert copd_condition.search_url() == f"Condition?{params}"
 
 
 def test_condition_as_fhir(copd_condition):
     fhir = copd_condition.as_fhir()
-    assert set(fhir.keys()) == set(('resourceType', 'code', 'subject'))
-    assert Reference(Patient(id=PATIENT_ID)).as_fhir() == fhir['subject']
+    assert set(fhir.keys()) == set(("resourceType", "code", "subject"))
+    assert Reference(Patient(id=PATIENT_ID)).as_fhir() == fhir["subject"]
 
 
 def test_paging(mocker, patient_search_bundle):
 
     # mock first of many page results:
     mocker.patch(
-        'carl.modules.paging.requests.get',
-        return_value=MockResponse(data=patient_search_bundle))
+        "carl.modules.paging.requests.get",
+        return_value=MockResponse(data=patient_search_bundle),
+    )
 
-    for bundle_page in next_resource_bundle('Patient'):
-        assert 'link' in bundle_page
+    for bundle_page in next_resource_bundle("Patient"):
+        assert "link" in bundle_page
         break  # only first page returned from mocker
 
     # obtain valid URL from bundle
     url = next_page_link_from_bundle(bundle_page)
-    assert url.startswith('http://')
+    assert url.startswith("http://")
 
 
 def test_canonical_identifier(mocker, patient_data):
 
     # mock HAPI result from patient lookup
     mocker.patch(
-        'carl.logic.copd.requests.get',
-        return_value=MockResponse(data=patient_data))
+        "carl.logic.copd.requests.get", return_value=MockResponse(data=patient_data)
+    )
 
     found = patient_canonical_identifier(patient_id=1, site_code="uw")
     assert found == "https://cnics.cirg.washington.edu/site-patient-id/uw|UW:517"

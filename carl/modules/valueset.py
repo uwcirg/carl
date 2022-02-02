@@ -8,21 +8,22 @@ from carl.modules.resource import Resource
 
 class ValueSet(Resource):
     """FHIR ValueSet - used for (de)serializing and queries"""
-    RESOURCE_TYPE = 'ValueSet'
+
+    RESOURCE_TYPE = "ValueSet"
 
     def __init__(self, url):
         """Minimum necessary to uniquely define or query"""
         super().__init__()
-        self._fields['url'] = url
+        self._fields["url"] = url
 
     @staticmethod
     def unique_params():
-        return tuple(['url'])
+        return tuple(["url"])
 
     @classmethod
     def from_fhir(cls, data):
         """Deserialize from json (FHIR) data"""
-        return cls(url=data['url'])
+        return cls(url=data["url"])
 
 
 def valueset_codings(url):
@@ -32,16 +33,17 @@ def valueset_codings(url):
     response = requests.get(resource_path, params=search_params)
     response.raise_for_status()
     bundle = response.json()
-    if bundle['total'] != 1:
+    if bundle["total"] != 1:
         raise ValueError(
-            "Expected ValueSet {url} not found; Did `flask bootstrap` get called?")
+            "Expected ValueSet {url} not found; Did `flask bootstrap` get called?"
+        )
 
-    value_set = bundle['entry'][0]['resource']
+    value_set = bundle["entry"][0]["resource"]
     codings = set()
-    for entry in value_set.get('compose').get('include'):
+    for entry in value_set.get("compose").get("include"):
         # By system, then nested codes - parse and add.
-        system = entry['system']
-        for concept in entry.get('concept'):
-            codings.add(Coding(system=system, code=concept['code']))
+        system = entry["system"]
+        for concept in entry.get("concept"):
+            codings.add(Coding(system=system, code=concept["code"]))
 
     return codings

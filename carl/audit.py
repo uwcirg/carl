@@ -11,14 +11,14 @@ EVENT_LOG_NAME = "carl_event_logger"
 
 def audit_log_init(app):
     log_server_handler = LogServerHandler(
-        jwt=app.config['LOGSERVER_TOKEN'],
-        url=app.config['LOGSERVER_URL'])
+        jwt=app.config["LOGSERVER_TOKEN"], url=app.config["LOGSERVER_URL"]
+    )
     event_logger = logging.getLogger(EVENT_LOG_NAME)
     event_logger.setLevel(logging.INFO)
     event_logger.addHandler(log_server_handler)
 
 
-def audit_entry(message, level='info', extra=None):
+def audit_entry(message, level="info", extra=None):
     """Log entry, adding in session info such as active user"""
     try:
         logger = logging.getLogger(EVENT_LOG_NAME)
