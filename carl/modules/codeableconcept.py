@@ -29,7 +29,7 @@ class CodeableConcept(object):
         """
         if len(self.codes) != 1:
             raise ValueError(
-                f"Require single coding to include {self} in search for value_param "
+                f"Require single coding to include {self} in search for value_param"
             )
 
         coding = self.codes[0]
