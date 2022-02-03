@@ -33,7 +33,7 @@
       ]
     }
   ],
-  "description": "ValueSet including all the codings used by CNICS to define COPD or COPD exacerbated",
+  "description": "ValueSet including all the codings used by CNICS to define COPD or COPD, exacerbation",
   "compose": {
     "lockedDate": "2021-10-21",
     "include": [
