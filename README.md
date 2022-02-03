@@ -8,7 +8,7 @@ the same external FHIR store.
 Start simple, in prototype style, with the intent to replace logic engine and related components
 as the need arises.
 
-### COPD & COPD, Exacerbation
+### 'COPD' & 'COPD, exacerbation'
 Determine if a Patient should receive a COPD Condition with the `cnics` namespace system
 by looking for at least one `coding` from the following known COPD Condition codings:
 
