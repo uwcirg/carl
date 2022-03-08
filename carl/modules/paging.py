@@ -7,7 +7,7 @@ from carl.config import FHIR_SERVER_URL
 
 
 def next_page_link_from_bundle(bundle):
-    next_page_link = jmespath.search("link[?relation==`next`].[url]", bundle)
+    next_page_link = jmespath.search("link[?relation=='next'].[url]", bundle)
     if not (next_page_link and len(next_page_link)):
         return
 
