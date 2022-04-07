@@ -66,6 +66,10 @@ def patient_has(patient_id, resource_type, resource_codings):
         resource_type=resource_type, search_params={"subject": patient_id}
     ):
         for entry in bundle.get("entry", []):
+            try:
+                x = entry["resource"]["code"]["coding"]
+            except KeyError:
+                raise ValueError(f"no resource in {entry}")
             for coding in entry["resource"]["code"]["coding"]:
                 patient_codings.add(
                     Coding(system=coding["system"], code=coding["code"])
