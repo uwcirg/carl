@@ -73,7 +73,7 @@ def classify(patient_id, site_code):
 @click.argument("site")
 def classify_all(site):
     """Classify all patients found"""
-    return process_patients(process_4_COPD_conditions, site)
+    return process_patients((process_4_COPD_conditions, process_4_COPD_medications), site)
 
 
 @base_blueprint.cli.command("declassify")
