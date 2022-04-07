@@ -5,7 +5,8 @@ import timeit
 
 from carl.logic.copd import (
     CNICS_IDENTIFIER_SYSTEM,
-    process_4_COPD,
+    process_4_COPD_conditions,
+    process_4_COPD_medications,
     remove_COPD_classification,
 )
 from carl.modules.paging import next_resource_bundle
@@ -62,14 +63,17 @@ def config_settings(config_key):
 @base_blueprint.route("/classify/<int:patient_id>/<string:site_code>", methods=["PUT"])
 def classify(patient_id, site_code):
     """Classify single patient as configured"""
-    return process_4_COPD(patient_id, site_code)
+    results = dict()
+    results["Condition"] = process_4_COPD_conditions(patient_id, site_code)
+    results["MedicationRequest"] = process_4_COPD_medications(patient_id, site_code)
+    return results
 
 
 @base_blueprint.cli.command("classify")
 @click.argument("site")
 def classify_all(site):
     """Classify all patients found"""
-    return process_patients(process_4_COPD, site)
+    return process_patients(process_4_COPD_conditions, site)
 
 
 @base_blueprint.cli.command("declassify")
@@ -79,9 +83,9 @@ def declassify_all(site):
     return process_patients(remove_COPD_classification, site)
 
 
-def process_patients(process_function, site):
+def process_patients(process_functions, site):
     start = timeit.default_timer()
-
+    results = dict()
     # Obtain batches of Patients with site identifier, process each in turn
     processed_patients = 0
     matched_patients = 0
@@ -92,12 +96,15 @@ def process_patients(process_function, site):
     for bundle in next_resource_bundle("Patient", search_params=search_params):
         assert bundle["resourceType"] == "Bundle"
         for item in bundle.get("entry", []):
+            matched = False
             assert item["resource"]["resourceType"] == "Patient"
-            results = process_function(
-                patient_id=item["resource"]["id"], site_code=site
-            )
+            for process_function in process_functions:
+                results = process_function(
+                    patient_id=item["resource"]["id"], site_code=site
+                )
+                matched = matched or results.get("matched", False)
             processed_patients += 1
-            if results.get("matched", False):
+            if matched:
                 matched_patients += 1
 
     duration = timeit.default_timer() - start

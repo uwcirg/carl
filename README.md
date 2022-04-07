@@ -4,14 +4,41 @@ embodies a `condition classifier`; a logic engine capable of acting on trigger e
 an external FHIR store for state and generating conditions when appropriate, pushed back into
 the same external FHIR store.
 
-## Conditions
-Start simple, in prototype style, with the intent to replace logic engine and related components
-as the need arises.
+## Marker Conditions
+### "COPD" & "COPD, exacerbation" Condition
 
-### 'COPD' & 'COPD, exacerbation'
-Determine if a Patient should receive a COPD Condition with the `cnics` namespace system
-by looking for at least one `coding` from the following known COPD Condition codings:
+Patients found to have at least one condition from the CNICS COPD Value Set,
+are marked with a [Condition](https://www.hl7.org/fhir/condition.html) with `code`:
 
+```
+{
+    system="https://cpro.cirg.washington.edu/groups",
+    code="CNICS.COPD2021.11.001",
+    display="COPD PRO group member",
+}
+```
+
+Example FHIR Query to obtain [FHIR Patients](https://www.hl7.org/fhir/patient.html) having said condition:
+```
+https://SERVER/fhir/Patient?_has:Condition:patient:code=CNICS.COPD2021.11.001
+```
+### COPD MedicationRequest
+
+Patients found to have at least one [MedicationRequest](https://www.hl7.org/fhir/medicationrequest.html)
+from the CNICS COPD Medication Value Set, are marked with a
+[Condition](https://www.hl7.org/fhir/condition.html) with `code`:
+
+```
+{
+    system="https://cpro.cirg.washington.edu/groups",
+    code="CNICS.COPDMED2022.03.001",
+    display="COPD Medication group member",
+}
+```
+
+## ValueSets
+### CNICS COPD Value Set
+List of qualifying COPD and COPD exacerbation condition codings.
 - "system": "http://hl7.org/fhir/sid/icd-9-cm"
   - "code": "491"
   - "code": "491.0"
@@ -43,6 +70,30 @@ by looking for at least one `coding` from the following known COPD Condition cod
   - "code": "J44.0"
   - "code": "J44.1"
   - "code": "J44.9"
+
+### CNICS COPD Medication Value Set
+List of qualifying COPD MedicationRequest codings.
+- "system": "https://cnics.cirg.washington.edu/medication-name"
+  - "code": "IPRATROPIUM-INHALED"
+  - "code": "ARFORMOTEROL"
+  - "code": "FORMOTEROL"
+  - "code": "OLODATEROL"
+  - "code": "SALMETEROL"
+  - "code": "ACLIDINIUM"
+  - "code": "TIOTROPIUM"
+  - "code": "UMECLIDINIUM"
+  - "code": "FLUTICASONE FUROATE + UMECLIDINIUM + VILANTEROL"
+  - "code": "ALBUTEROL + IPRATROPIUM"
+  - "code": "IPRATROPIUM +  FENOTEROL"
+  - "code": "ACLIDINIUM + FORMOTEROL"
+  - "code": "BUDESONIDE + FORMOTEROL"
+  - "code": "FLUTICASONE + SALMETEROL"
+  - "code": "FLUTICASONE + VILANTEROL"
+  - "code": "MOMETASONE + FORMOTEROL"
+  - "code": "OLODATEROL + TIOTROPIUM"
+  - "code": "UMECLIDINIUM +  VILANTEROL"
+  - "code": "GLYCOPYRROLATE + FORMOTEROL FUMARATE"
+
 
 ## How To Run
 As a flask application, `carl` exposes HTTP routes as well as a number of command line
