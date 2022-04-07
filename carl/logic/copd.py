@@ -56,7 +56,7 @@ def patient_canonical_identifier(patient_id, site_code):
         return match[0]
 
 
-def patient_has(patient_id, resource_type, resource_codings):
+def patient_has(patient_id, resource_type, resource_codings, code_attribute="code"):
     """Determine if given patient has at least one matching resource in given codings
 
     :returns: intersection of patient's resource with the given codings
@@ -67,10 +67,10 @@ def patient_has(patient_id, resource_type, resource_codings):
     ):
         for entry in bundle.get("entry", []):
             try:
-                x = entry["resource"]["code"]["coding"]
-            except KeyError:
-                raise ValueError(f"no resource in {entry}")
-            for coding in entry["resource"]["code"]["coding"]:
+                codings = entry["resource"][code_attribute]["coding"]
+            except KeyError as deets:
+                raise ValueError(f"failed lookup in {entry}: {deets}")
+            for coding in codings:
                 patient_codings.add(
                     Coding(system=coding["system"], code=coding["code"])
                 )
@@ -154,6 +154,7 @@ def process_4_COPD_medications(patient_id, site_code):
         patient_id=patient_id,
         resource_type="MedicationRequest",
         resource_codings=medication_codings,
+        code_attribute="medicationCodeableConcept"
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
@@ -187,7 +188,9 @@ def remove_COPD_classification(patient_id, site_code):
     current_app.logger.debug(f"declassify {patient_id} of COPD")
     classified_COPD_codings = set([CNICS_COPD_coding, CNICS_COPD_medication_coding])
     previously_classified = patient_has(
-        patient_id=patient_id, condition_codings=classified_COPD_codings
+        patient_id=patient_id,
+        resource_codings=classified_COPD_codings,
+        resource_type="Condition"
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
