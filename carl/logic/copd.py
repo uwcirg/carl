@@ -154,7 +154,7 @@ def process_4_COPD_medications(patient_id, site_code):
         patient_id=patient_id,
         resource_type="MedicationRequest",
         resource_codings=medication_codings,
-        code_attribute="medicationCodeableConcept"
+        code_attribute="medicationCodeableConcept",
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
@@ -190,7 +190,7 @@ def remove_COPD_classification(patient_id, site_code):
     previously_classified = patient_has(
         patient_id=patient_id,
         resource_codings=classified_COPD_codings,
-        resource_type="Condition"
+        resource_type="Condition",
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
