@@ -16,7 +16,9 @@ COPD_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-c
 
 # ValueSet for all known COPD MedicationRequest codings - should match "url" in:
 # ``carl.serialized.COPD_medication_valueset.json``
-COPD_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-medication-codings"
+COPD_MEDICATION_VALUESET_URI = (
+    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-medication-codings"
+)
 
 
 # Designated coding used to tag users eligible for COPD questionnaire
@@ -113,7 +115,7 @@ def process_4_COPD_conditions(patient_id, site_code):
     positive_codings = patient_has(
         patient_id=patient_id,
         resource_type="Condition",
-        resource_codings=condition_codings
+        resource_codings=condition_codings,
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
@@ -147,7 +149,7 @@ def process_4_COPD_medications(patient_id, site_code):
     positive_codings = patient_has(
         patient_id=patient_id,
         resource_type="MedicationRequest",
-        resource_codings=medication_codings
+        resource_codings=medication_codings,
     )
     results = {
         "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
