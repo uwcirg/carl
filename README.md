@@ -5,7 +5,7 @@ an external FHIR store for state and generating conditions when appropriate, pus
 the same external FHIR store.
 
 ## Marker Conditions
-### "COPD" & "COPD, exacerbation" Condition
+### "COPD" or "COPD, exacerbation" Condition
 
 Patients found to have at least one condition from the CNICS COPD Value Set,
 are marked with a [Condition](https://www.hl7.org/fhir/condition.html) with `code`:
@@ -32,7 +32,7 @@ from the CNICS COPD Medication Value Set, are marked with a
 {
     system="https://cpro.cirg.washington.edu/groups",
     code="CNICS.COPDMED2022.03.001",
-    display="COPD Medication group member",
+    display="COPD with Medication PRO group member",
 }
 ```
 
