@@ -8,7 +8,7 @@ the same external FHIR store.
 ### "COPD" or "COPD, exacerbation" Condition
 
 Patients found to have at least one condition from the CNICS COPD Value Set,
-are marked with a [Condition](https://www.hl7.org/fhir/condition.html) with `code`:
+are marked with [Condition](https://www.hl7.org/fhir/condition.html) having `code`:
 
 ```
 {
@@ -22,18 +22,23 @@ Example FHIR Query to obtain [FHIR Patients](https://www.hl7.org/fhir/patient.ht
 ```
 https://SERVER/fhir/Patient?_has:Condition:patient:code=CNICS.COPD2021.11.001
 ```
-### COPD MedicationRequest
+### COPD With MedicationRequest
 
-Patients found to have at least one [MedicationRequest](https://www.hl7.org/fhir/medicationrequest.html)
-from the CNICS COPD Medication Value Set, are marked with a
-[Condition](https://www.hl7.org/fhir/condition.html) with `code`:
+Patients qualifying for the `COPD PRO group marker` also found to have at least one
+[MedicationRequest](https://www.hl7.org/fhir/medicationrequest.html) from the CNICS COPD Medication Value
+Set, are marked with [Condition](https://www.hl7.org/fhir/condition.html) having `code`:
 
 ```
 {
     system="https://cpro.cirg.washington.edu/groups",
     code="CNICS.COPDMED2022.03.001",
-    display="COPD with Medication PRO group member",
+    display="COPD PRO group member with qualifying MedicationRequest",
 }
+```
+
+Example FHIR Query to obtain [FHIR Patients](https://www.hl7.org/fhir/patient.html) having said condition:
+```
+https://SERVER/fhir/Patient?_has:Condition:patient:code=CNICS.COPDMED2022.03.001
 ```
 
 ## ValueSets

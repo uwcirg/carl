@@ -65,7 +65,9 @@ def classify(patient_id, site_code):
     """Classify single patient as configured"""
     results = dict()
     results["Condition"] = process_4_COPD_conditions(patient_id, site_code)
-    results["MedicationRequest"] = process_4_COPD_medications(patient_id, site_code)
+    # We only consider COPD meds if the patient obtained the COPD condition
+    if results["Condition"]["matched"]:
+        results["MedicationRequest"] = process_4_COPD_medications(patient_id, site_code)
     return results
 
 
@@ -74,7 +76,9 @@ def classify(patient_id, site_code):
 def classify_all(site):
     """Classify all patients found"""
     return process_patients(
-        (process_4_COPD_conditions, process_4_COPD_medications), site
+        process_functions=(process_4_COPD_conditions, process_4_COPD_medications),
+        site=site,
+        require_all=True
     )
 
 
@@ -85,7 +89,15 @@ def declassify_all(site):
     return process_patients(remove_COPD_classification, site)
 
 
-def process_patients(process_functions, site):
+def process_patients(process_functions, site, require_all=False):
+    """
+    Process all patients with given list of functions.
+
+    :param process_functions: ordered list of functions to call on each respective patient
+    :param site: name of site being processed, i.e. "uw"
+    :param require_all: set True to treat ordered list of process functions with a logical
+      AND, i.e. bail on each patient with first function in list to fail
+    """
     start = timeit.default_timer()
     results = dict()
     # Obtain batches of Patients with site identifier, process each in turn
@@ -105,6 +117,8 @@ def process_patients(process_functions, site):
                     patient_id=item["resource"]["id"], site_code=site
                 )
                 matched = matched or results.get("matched", False)
+                if require_all and not matched:
+                    break
             processed_patients += 1
             if matched:
                 matched_patients += 1
