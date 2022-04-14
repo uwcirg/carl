@@ -26,6 +26,7 @@ class ValueSet(Resource):
         return cls(url=data["url"])
 
 
+# TODO: cache this never changing round-trip
 def valueset_codings(url):
     """Obtain set of codings in matching ValueSet by url field"""
     search_params = {"url": url}
