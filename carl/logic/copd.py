@@ -28,7 +28,7 @@ CNICS_COPD_coding = Coding(
     display="COPD PRO group member",
 )
 
-# Designated coding used to tag users found to be COPD PRO group members with qualifying MedicationRequest
+# Designated coding used to tag COPD PRO group members with qualifying MedicationRequest
 CNICS_COPD_medication_coding = Coding(
     system="https://cpro.cirg.washington.edu/groups",
     code="CNICS.COPDMED2022.03.001",

@@ -78,7 +78,7 @@ def classify_all(site):
     return process_patients(
         process_functions=(process_4_COPD_conditions, process_4_COPD_medications),
         site=site,
-        require_all=True
+        require_all=True,
     )
 
 
