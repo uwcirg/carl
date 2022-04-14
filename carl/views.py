@@ -86,7 +86,7 @@ def classify_all(site):
 @click.argument("site")
 def declassify_all(site):
     """Clear the (potentially) persisted COPD condition generated during classify"""
-    return process_patients(remove_COPD_classification, site)
+    return process_patients((remove_COPD_classification,), site)
 
 
 def process_patients(process_functions, site, require_all=False):
