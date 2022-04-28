@@ -16,11 +16,11 @@
       "value": "CNICS-COPD-codings"
     }
   ],
-  "version": "20211021",
+  "version": "20220428",
   "name": "CNICS COPD Codings",
   "status": "draft",
   "experimental": true,
-  "date": "2021-10-21",
+  "date": "2022-04-28",
   "publisher": "CIRG",
   "contact": [
     {
@@ -35,7 +35,7 @@
   ],
   "description": "ValueSet including all the codings used by CNICS to define COPD or COPD, exacerbation",
   "compose": {
-    "lockedDate": "2021-10-21",
+    "lockedDate": "2022-04-28",
     "include": [
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
@@ -131,6 +131,17 @@
           },
           {
             "code": "J44.9"
+          }
+        ]
+      },
+      {
+        "system": "https://cnics.cirg.washington.edu/diagnosis-name",
+        "concept": [
+          {
+            "code": "COPD"
+          },
+          {
+            "code": "COPD, exacerbation"
           }
         ]
       }
