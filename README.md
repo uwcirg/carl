@@ -75,6 +75,9 @@ List of qualifying COPD and COPD exacerbation condition codings.
   - "code": "J44.0"
   - "code": "J44.1"
   - "code": "J44.9"
+- "system": "https://cnics.cirg.washington.edu/diagnosis-name"
+  - "code": "COPD"
+  - "code": "COPD, exacerbation"
 
 ### CNICS COPD Medication Value Set
 List of qualifying COPD MedicationRequest codings.
