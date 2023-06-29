@@ -1,0 +1,303 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Medication Codes for diabetes&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+  },
+  "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-medication-codings",
+  "identifier": [
+    {
+      "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+      "value": "CNICS-diabetes-medication-codings"
+    }
+  ],
+  "version": "20230615",
+  "name": "CNICS Diabetes Medication Codings",
+  "status": "draft",
+  "experimental": true,
+  "date": "2023-06-15",
+  "publisher": "CIRG",
+  "contact": [
+    {
+      "name": "CIRG project team",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.cirg.washington.edu/"
+        }
+      ]
+    }
+  ],
+  "description": "ValueSet including all the medication codings used by CNICS requested for diabetes",
+  "compose": {
+    "lockedDate": "2023-06-15",
+    "include": [
+      {
+        "system": "https://cnics.cirg.washington.edu/medication-name",
+        "concept": [
+          {
+            "code": "ACARBOSE",
+            "display": "ACARBOSE"
+          },
+          {
+            "code": "ACLIDINIUM",
+            "display": "ACLIDINIUM"
+          },
+          {
+            "code": "ACLIDINIUM + FORMOTEROL",
+            "display": "ACLIDINIUM + FORMOTEROL"
+          },
+          {
+            "code": "ALBIGLUTIDE",
+            "display": "ALBIGLUTIDE"
+          },
+          {
+            "code": "ALBUTEROL + IPRATROPIUM",
+            "display": "ALBUTEROL + IPRATROPIUM"
+          },
+          {
+            "code": "ALOGLIPTIN",
+            "display": "ALOGLIPTIN"
+          },
+          {
+            "code": "ARFORMOTEROL",
+            "display": "ARFORMOTEROL"
+          },
+          {
+            "code": "BUDESONIDE + FORMOTEROL",
+            "display": "BUDESONIDE + FORMOTEROL"
+          },
+          {
+            "code": "CANAGLIFLOZIN",
+            "display": "CANAGLIFLOZIN"
+          },
+          {
+            "code": "CANAGLIFLOZIN + METFORMIN",
+            "display": "CANAGLIFLOZIN + METFORMIN"
+          },
+          {
+            "code": "DAPAGLIFLOZIN",
+            "display": "DAPAGLIFLOZIN"
+          },
+          {
+            "code": "DAPAGLIFLOZIN + METFORMIN",
+            "display": "DAPAGLIFLOZIN + METFORMIN"
+          },
+          {
+            "code": "EMPAGLIFLOZIN",
+            "display": "DULAGLUTIDE"
+          },
+          {
+            "code": "EMPAGLIFLOZIN + LINAGLIPTIN + METFORMIN",
+            "display": "EMPAGLIFLOZIN"
+          },
+          {
+            "code": "EMPAGLIFLOZIN + LINAGLIPTIN + METFORMIN",
+            "display": "EMPAGLIFLOZIN + LINAGLIPTIN + METFORMIN"
+          },
+          {
+            "code": "EMPAGLIFLOZIN + METFORMIN",
+            "display": "EMPAGLIFLOZIN + METFORMIN"
+          },
+          {
+            "code": "ERTUGLIFLOZIN",
+            "display": "ERTUGLIFLOZIN"
+          },
+          {
+            "code": "EXENATIDE",
+            "display": "EXENATIDE"
+          },
+          {
+            "code": "FLUTICASONE FUROATE + UMECLIDINIUM + VILANTEROL",
+            "display": "FLUTICASONE FUROATE + UMECLIDINIUM + VILANTEROL"
+          },
+          {
+            "code": "FLUTICASONE + SALMETEROL",
+            "display": "FLUTICASONE + SALMETEROL"
+          },
+          {
+            "code": "FLUTICASONE + VILANTEROL",
+            "display": "FLUTICASONE + VILANTEROL"
+          },
+          {
+            "code": "FORMOTEROL",
+            "display": "FORMOTEROL"
+          },
+          {
+            "code": "GLIMEPIRIDE",
+            "display": "GLIMEPIRIDE"
+          },
+          {
+            "code": "GLIPIZIDE",
+            "display": "GLIPIZIDE"
+          },
+          {
+            "code": "GLIPIZIDE EXTENDED-RELEASE",
+            "display": "GLIPIZIDE EXTENDED-RELEASE"
+          },
+          {
+            "code": "GLYBURIDE",
+            "display": "GLYBURIDE"
+          },
+          {
+            "code": "GLYBURIDE + METFORMIN",
+            "display": "GLYBURIDE + METFORMIN"
+          },
+          {
+            "code": "GLYCOPYRROLATE + FORMOTEROL FUMARATE",
+            "display": "GLYCOPYRROLATE + FORMOTEROL FUMARATE"
+          },
+          {
+            "code": "INSULIN",
+            "display": "INSULIN"
+          },
+          {
+            "code": "INSULIN DEGLUDEC + LIRAGLUTIDE",
+            "display": "INSULIN DEGLUDEC + LIRAGLUTIDE"
+          },
+          {
+            "code": "INSULIN GLARGINE + LIXISENATIDE",
+            "display": "INSULIN GLARGINE + LIXISENATIDE"
+          },
+          {
+            "code": "IPRATROPIUM-INHALED",
+            "display": "IPRATROPIUM-INHALED"
+          },
+          {
+            "code": "LINAGLIPTIN",
+            "display": "LINAGLIPTIN"
+          },
+          {
+            "code": "LINAGLIPTIN + METFORMIN",
+            "display": "LINAGLIPTIN + METFORMIN"
+          },
+          {
+            "code": "LIRAGLUTIDE",
+            "display": "LIRAGLUTIDE"
+          },
+          {
+            "code": "LIXISENATIDE",
+            "display": "LIXISENATIDE"
+          },
+          {
+            "code": "METFORMIN",
+            "display": "METFORMIN"
+          },
+          {
+            "code": "METFORMIN + GLIPIZIDE",
+            "display": "METFORMIN + GLIPIZIDE"
+          },
+          {
+            "code": "METFORMIN + GLYBURIDE",
+            "display": "METFORMIN + GLYBURIDE"
+          },
+          {
+            "code": "METFORMIN + PIOGLITAZONE",
+            "display": "METFORMIN + PIOGLITAZONE"
+          },
+          {
+            "code": "METFORMIN + REPAGLINIDE",
+            "display": "METFORMIN + REPAGLINIDE"
+          },
+          {
+            "code": "METFORMIN + ROSIGLITAZONE",
+            "display": "METFORMIN + ROSIGLITAZONE"
+          },
+          {
+            "code": "METFORMIN + SAXAGLIPTIN",
+            "display": "METFORMIN + SAXAGLIPTIN"
+          },
+          {
+            "code": "METFORMIN + SITAGLIPTIN",
+            "display": "METFORMIN + SITAGLIPTIN"
+          },
+          {
+            "code": "MIGLITOL",
+            "display": "MIGLITOL"
+          },
+          {
+            "code": "MOMETASONE + FORMOTEROL",
+            "display": "MOMETASONE + FORMOTEROL"
+          },
+          {
+            "code": "NATEGLINIDE",
+            "display": "NATEGLINIDE"
+          },
+          {
+            "code": "OLODATEROL",
+            "display": "OLODATEROL"
+          },
+          {
+            "code": "OLODATEROL + TIOTROPIUM",
+            "display": "OLODATEROL + TIOTROPIUM"
+          },
+          {
+            "code": "PIOGLITAZONE",
+            "display": "PIOGLITAZONE"
+          },
+          {
+            "code": "PIOGLITAZONE + GLIMEPIRIDE",
+            "display": "PIOGLITAZONE + GLIMEPIRIDE"
+          },
+          {
+            "code": "PRAMLINTIDE",
+            "display": "PRAMLINTIDE"
+          },
+          {
+            "code": "REPAGLINIDE",
+            "display": "REPAGLINIDE"
+          },
+          {
+            "code": "ROSIGLITAZONE",
+            "display": "ROSIGLITAZONE"
+          },
+          {
+            "code": "ROSIGLITAZONE + GLIMEPRIDE",
+            "display": "ROSIGLITAZONE + GLIMEPRIDE"
+          },
+          {
+            "code": "SALMETEROL",
+            "display": "SALMETEROL"
+          },
+          {
+            "code": "SAXAGLIPTIN",
+            "display": "SAXAGLIPTIN"
+          },
+          {
+            "code": "SEMAGLUTIDE",
+            "display": "SEMAGLUTIDE"
+          },
+          {
+            "code": "SEMAGLUTIDE ORAL",
+            "display": "SEMAGLUTIDE ORAL"
+          },
+          {
+            "code": "SITAGLIPTIN",
+            "display": "SITAGLIPTIN"
+          },
+          {
+            "code": "TIOTROPIUM",
+            "display": "TIOTROPIUM"
+          },
+          {
+            "code": "TROGLITAZONE",
+            "display": "TROGLITAZONE"
+          },
+          {
+            "code": "UMECLIDINIUM",
+            "display": "UMECLIDINIUM"
+          },
+          {
+            "code": "UMECLIDINIUM +  VILANTEROL",
+            "display": "UMECLIDINIUM +  VILANTEROL"
+          }
+        ]
+      }
+    ]
+  }
+}
