@@ -6,8 +6,8 @@ from carl.config import FHIR_SERVER_URL
 from carl.modules.coding import Coding
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.condition import Condition
-from carl.modules.paging import next_resource_bundle
-from carl.modules.patient import Patient
+from carl.modules.patient import Patient, patient_has
+from carl.modules.resource import delete_resource, persist_resource
 from carl.modules.valueset import valueset_codings
 
 # ValueSet for all known COPD Condition codings - should match "url" in:
@@ -54,56 +54,6 @@ def patient_canonical_identifier(patient_id, site_code):
 
     if match:
         return match[0]
-
-
-def patient_has(patient_id, resource_type, resource_codings, code_attribute="code"):
-    """Determine if given patient has at least one matching resource in given codings
-
-    :returns: intersection of patient's resource with the given codings
-    """
-    patient_codings = set()
-    for bundle in next_resource_bundle(
-        resource_type=resource_type, search_params={"subject": patient_id}
-    ):
-        for entry in bundle.get("entry", []):
-            try:
-                codings = entry["resource"][code_attribute]["coding"]
-            except KeyError as deets:
-                raise ValueError(f"failed lookup in {entry}: {deets}")
-            for coding in codings:
-                patient_codings.add(
-                    Coding(system=coding["system"], code=coding["code"])
-                )
-
-    return patient_codings.intersection(resource_codings)
-
-
-def delete_resource(resource):
-    """Delete given resource from FHIR_SERVER_URL
-
-    NB - this doesn't round-trip check if given resource already exists,
-    but rather does a DELETE with necessary search params to prevent duplicate
-    writes.  AKA conditional delete: https://www.hl7.org/fhir/http.html#cond-delete
-    """
-    url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.delete(url=url, json=resource.as_fhir(), timeout=30)
-    current_app.logger.debug(f"HAPI DELETE: {response.url}")
-    response.raise_for_status()
-    return response.json()
-
-
-def persist_resource(resource):
-    """Persist given resource to FHIR_SERVER_URL
-
-    NB - this doesn't round-trip check if given resource already exists,
-    but rather does a PUT with necessary search params to prevent duplicate
-    writes.  AKA conditional update: https://www.hl7.org/fhir/http.html#cond-update
-    """
-    url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.put(url=url, json=resource.as_fhir(), timeout=30)
-    current_app.logger.debug(f"HAPI PUT: {response.url}")
-    response.raise_for_status()
-    return response.json()
 
 
 def process_4_COPD_conditions(patient_id, site_code):

@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import logging
 import requests
 from urllib.parse import urlencode
 
@@ -85,3 +86,31 @@ class Resource(object):
             search_params[field] = value
 
         return f"{self.RESOURCE_TYPE}?{urlencode(search_params)}"
+
+
+def delete_resource(resource):
+    """Delete given resource from FHIR_SERVER_URL
+
+    NB - this doesn't round-trip check if given resource already exists,
+    but rather does a DELETE with necessary search params to prevent duplicate
+    writes.  AKA conditional delete: https://www.hl7.org/fhir/http.html#cond-delete
+    """
+    url = f"{FHIR_SERVER_URL}{resource.search_url()}"
+    response = requests.delete(url=url, json=resource.as_fhir(), timeout=30)
+    logging.debug(f"HAPI DELETE: {response.url}")
+    response.raise_for_status()
+    return response.json()
+
+
+def persist_resource(resource):
+    """Persist given resource to FHIR_SERVER_URL
+
+    NB - this doesn't round-trip check if given resource already exists,
+    but rather does a PUT with necessary search params to prevent duplicate
+    writes.  AKA conditional update: https://www.hl7.org/fhir/http.html#cond-update
+    """
+    url = f"{FHIR_SERVER_URL}{resource.search_url()}"
+    response = requests.put(url=url, json=resource.as_fhir(), timeout=30)
+    logging.debug(f"HAPI PUT: {response.url}")
+    response.raise_for_status()
+    return response.json()
