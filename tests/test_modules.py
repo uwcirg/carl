@@ -3,14 +3,14 @@ import os
 from pytest import fixture
 from urllib.parse import urlencode
 
-from carl.logic.copd import CNICS_COPD_coding, patient_canonical_identifier
+from carl.logic.copd import CNICS_COPD_coding
 from carl.modules.factories import deserialize_resource
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.coding import Coding
 from carl.modules.condition import Condition
 from carl.modules.codesystem import CodeSystem
 from carl.modules.paging import next_page_link_from_bundle, next_resource_bundle
-from carl.modules.patient import Patient
+from carl.modules.patient import Patient, patient_canonical_identifier
 from carl.modules.reference import Reference
 from carl.modules.valueset import ValueSet, valueset_codings
 
@@ -148,7 +148,7 @@ def test_canonical_identifier(mocker, patient_data):
 
     # mock HAPI result from patient lookup
     mocker.patch(
-        "carl.logic.copd.requests.get", return_value=MockResponse(data=patient_data)
+        "carl.modules.patient.requests.get", return_value=MockResponse(data=patient_data)
     )
 
     found = patient_canonical_identifier(patient_id=1, site_code="uw")

@@ -1,7 +1,13 @@
 """FHIR ValueSet module"""
+import requests
+from flask import has_app_context, current_app
+
+from carl.config import FHIR_SERVER_URL
 from carl.modules.coding import Coding
 from carl.modules.paging import next_resource_bundle
 from carl.modules.resource import Resource
+
+CNICS_IDENTIFIER_SYSTEM = "https://cnics.cirg.washington.edu/site-patient-id/"
 
 
 class Patient(Resource):
@@ -44,3 +50,21 @@ def patient_has(patient_id, resource_type, resource_codings, code_attribute="cod
                 )
 
     return patient_codings.intersection(resource_codings)
+
+
+def patient_canonical_identifier(patient_id, site_code):
+    """Return system|value identifier if patient has one for preferred system"""
+    url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
+    response = requests.get(url, timeout=30)
+    if has_app_context():
+        current_app.logger.debug(f"HAPI GET: {response.url}")
+    response.raise_for_status()
+
+    match = [
+        f"{identifier['system']}|{identifier['value']}"
+        for identifier in response.json().get("identifier", [])
+        if identifier["system"] == CNICS_IDENTIFIER_SYSTEM + site_code
+    ]
+
+    if match:
+        return match[0]

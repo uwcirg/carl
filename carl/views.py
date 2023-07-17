@@ -4,11 +4,11 @@ from flask.json import JSONEncoder
 import timeit
 
 from carl.logic.copd import (
-    CNICS_IDENTIFIER_SYSTEM,
     process_4_COPD_conditions,
     process_4_COPD_medications,
     remove_COPD_classification,
 )
+from carl.modules.patient import CNICS_IDENTIFIER_SYSTEM
 from carl.modules.paging import next_resource_bundle
 
 base_blueprint = Blueprint("base", __name__, cli_group=None)
