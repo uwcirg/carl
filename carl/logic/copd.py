@@ -3,13 +3,14 @@ from flask import current_app
 
 from carl.modules.coding import Coding
 from carl.modules.codeableconcept import CodeableConcept
-from carl.modules.condition import Condition
+from carl.modules.condition import Condition, mark_patient_with_condition
 from carl.modules.patient import Patient, patient_canonical_identifier, patient_has
-from carl.modules.resource import delete_resource, persist_resource
+from carl.modules.resource import delete_resource
 from carl.modules.valueset import valueset_codings
 
 # ValueSet for all known COPD Condition codings - should match "url" in:
 # ``carl.serialized.COPD_valueset.json``
+
 COPD_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-codings"
 
 # ValueSet for all known COPD MedicationRequest codings - should match "url" in:
@@ -56,16 +57,7 @@ def process_4_COPD_conditions(patient_id, site_code):
     if not positive_codings:
         return results
 
-    condition = Condition()
-    condition.code = CodeableConcept(CNICS_COPD_coding)
-    condition.subject = Patient(patient_id)
-    response = persist_resource(resource=condition)
-    results["matched"] = True
-    results["condition"] = response
-    results["intersection"] = [coding.as_fhir() for coding in positive_codings]
-
-    current_app.logger.debug(results)
-    return results
+    return mark_patient_with_condition(patient_id, CNICS_COPD_coding, results)
 
 
 def process_4_COPD_medications(patient_id, site_code):
@@ -91,16 +83,7 @@ def process_4_COPD_medications(patient_id, site_code):
     if not positive_codings:
         return results
 
-    condition = Condition()
-    condition.code = CodeableConcept(CNICS_COPD_medication_coding)
-    condition.subject = Patient(patient_id)
-    response = persist_resource(resource=condition)
-    results["matched"] = True
-    results["condition"] = response
-    results["intersection"] = [coding.as_fhir() for coding in positive_codings]
-
-    current_app.logger.debug(results)
-    return results
+    return mark_patient_with_condition(patient_id, CNICS_COPD_medication_coding, results)
 
 
 def remove_COPD_classification(patient_id, site_code):
