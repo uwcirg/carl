@@ -42,9 +42,8 @@ def mark_patient_with_condition(patient_id, condition_coding, results):
     condition.code = CodeableConcept(condition_coding)
     condition.subject = Patient(patient_id)
     response = persist_resource(resource=condition)
-    results["matched"] = True
-    results["condition"] = response
-    # results["intersection"] = [coding.as_fhir() for coding in positive_codings]
+    results[f"{condition_coding.code}_matched"] = True
+    results[f"{condition_coding.code}_condition"] = response
 
     current_app.logger.debug(results)
     return results

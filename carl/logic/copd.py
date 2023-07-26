@@ -4,7 +4,7 @@ from flask import current_app
 from carl.modules.coding import Coding
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.condition import Condition, mark_patient_with_condition
-from carl.modules.patient import Patient, patient_canonical_identifier, patient_has
+from carl.modules.patient import Patient, patient_has
 from carl.modules.resource import delete_resource
 from carl.modules.valueset import valueset_codings
 
@@ -35,8 +35,8 @@ CNICS_COPD_medication_coding = Coding(
 )
 
 
-def process_4_COPD_conditions(patient_id, site_code):
-    """Process given patient for COPD
+def process_4_COPD_conditions(patient_id):
+    """Process given patient for COPD conditions
 
     NB: generates side effects, namely a special Condition is persisted in the
     configured FHIR store for patients found to have a qualifying COPD Condition
@@ -51,7 +51,7 @@ def process_4_COPD_conditions(patient_id, site_code):
         resource_codings=condition_codings,
     )
     results = {
-        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
+        "patient_id": patient_id,
         "COPD Condition codings found": len(positive_codings) > 0,
     }
     if not positive_codings:
@@ -60,7 +60,7 @@ def process_4_COPD_conditions(patient_id, site_code):
     return mark_patient_with_condition(patient_id, CNICS_COPD_coding, results)
 
 
-def process_4_COPD_medications(patient_id, site_code):
+def process_4_COPD_medications(patient_id):
     """Process given patient for COPD medications
 
     NB: generates side effects, namely a special Condition is persisted in the
@@ -77,7 +77,7 @@ def process_4_COPD_medications(patient_id, site_code):
         code_attribute="medicationCodeableConcept",
     )
     results = {
-        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
+        "patient_id": patient_id,
         "COPD MedicationRequest codings found": len(positive_codings) > 0,
     }
     if not positive_codings:
@@ -86,7 +86,26 @@ def process_4_COPD_medications(patient_id, site_code):
     return mark_patient_with_condition(patient_id, CNICS_COPD_medication_coding, results)
 
 
-def remove_COPD_classification(patient_id, site_code):
+def classify_for_COPD(patient_id):
+    """classify given patient for diabetes
+
+    NB: generates side effects, namely a special Conditions are persisted in the
+    configured FHIR store for patients found to have a COPD using
+    the following criteria (applied in order, looking only till any case evaluates false):
+    - If patient has at least one Condition from the CNICS COPD codings value set,
+    mark patient with the CNICS_COPD_coding Condition
+    - If patient has at least one MedicationRequest from the CNICS COPD medication coding
+    value set, mark patient with the CNICS_COPD_medication_coding Condition
+    """
+    results = process_4_COPD_conditions(patient_id)
+    # We only consider COPD meds if the patient obtained the COPD condition
+    # success is recorded in a key with the <condition.code>_matched pattern
+    if any(key.endswith("matched") for key in results.keys()):
+        results.update(process_4_COPD_medications(patient_id))
+    return results
+
+
+def remove_COPD_classification(patient_id):
     """declassify given patient, i.e. remove added COPD Conditions
 
     Function used to reset or declassify patients previously found to have COPD,
@@ -104,7 +123,7 @@ def remove_COPD_classification(patient_id, site_code):
         resource_type="Condition",
     )
     results = {
-        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
+        "patient_id": patient_id,
         "COPD classification found": len(previously_classified) > 0,
     }
     if not previously_classified:
@@ -117,7 +136,7 @@ def remove_COPD_classification(patient_id, site_code):
         condition.subject = Patient(patient_id)
         delete_resource(resource=condition)
 
-    results["matched"] = True
+    results["COPD_matched"] = True
 
     current_app.logger.debug(results)
     return results

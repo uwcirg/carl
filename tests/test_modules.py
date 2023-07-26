@@ -4,11 +4,13 @@ from pytest import fixture
 from urllib.parse import urlencode
 
 from carl.logic.copd import CNICS_COPD_coding
+from carl.logic.diabetes import A1C_observation_coding
 from carl.modules.factories import deserialize_resource
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.coding import Coding
 from carl.modules.condition import Condition
 from carl.modules.codesystem import CodeSystem
+from carl.modules.observation import Observation
 from carl.modules.paging import next_page_link_from_bundle, next_resource_bundle
 from carl.modules.patient import Patient, patient_canonical_identifier
 from carl.modules.reference import Reference
@@ -51,6 +53,34 @@ def copd_condition():
     cc.subject = Patient(PATIENT_ID)
     return cc
 
+
+@fixture
+def diabetes_observation():
+    d = Observation()
+    d.code = CodeableConcept(A1C_observation_coding)
+    d.subject = Patient(PATIENT_ID)
+    return d
+
+@fixture
+def diabetes_neg_observation(diabetes_observation):
+    diabetes_observation.value_quantity = {
+        "value": 4.95,
+        "unit": "%",
+        "system": "http://unitsofmeasure.org",
+        "code": "%"
+    }
+    return diabetes_observation
+
+
+@fixture
+def diabetes_pos_observation(diabetes_observation):
+    diabetes_observation.value_quantity = {
+        "value": 6.70,
+        "unit": "%",
+        "system": "http://unitsofmeasure.org",
+        "code": "%"
+    }
+    return diabetes_observation
 
 @fixture
 def patient_data(datadir):
@@ -121,6 +151,18 @@ def test_COPD_condition_patient(copd_condition):
     assert copd_condition.search_url() == f"Condition?{params}"
 
 
+def test_diabetes_obs_patient(diabetes_observation):
+    assert diabetes_observation.code == CodeableConcept(A1C_observation_coding)
+    params = urlencode(
+        {
+            "code": f"{A1C_observation_coding.system}|{A1C_observation_coding.code}",
+            "subject": PATIENT_ID
+
+        }
+    )
+    assert diabetes_observation.search_url() == f"Observation?{params}"
+
+
 def test_condition_as_fhir(copd_condition):
     fhir = copd_condition.as_fhir()
     assert set(fhir.keys()) == set(("resourceType", "code", "subject"))
@@ -153,3 +195,11 @@ def test_canonical_identifier(mocker, patient_data):
 
     found = patient_canonical_identifier(patient_id=1, site_code="uw")
     assert found == "https://cnics.cirg.washington.edu/site-patient-id/uw|UW:517"
+
+
+def test_diabetes_obs_pos_threshold(diabetes_pos_observation):
+    assert diabetes_pos_observation.value_quantity_above_threshold("6.0")
+
+
+def test_diabetes_obs_pos_threshold(diabetes_neg_observation):
+    assert not diabetes_neg_observation.value_quantity_above_threshold("6.0")

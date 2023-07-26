@@ -3,11 +3,8 @@ from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 import timeit
 
-from carl.logic.copd import (
-    process_4_COPD_conditions,
-    process_4_COPD_medications,
-    remove_COPD_classification,
-)
+from carl.logic.copd import classify_for_COPD, remove_COPD_classification
+from carl.logic.diabetes import classify_for_diabetes, remove_diabetes_classification
 from carl.modules.patient import CNICS_IDENTIFIER_SYSTEM
 from carl.modules.paging import next_resource_bundle
 
@@ -60,46 +57,38 @@ def config_settings(config_key):
     return jsonify(settings)
 
 
-@base_blueprint.route("/classify/<int:patient_id>/<string:site_code>", methods=["PUT"])
-def classify(patient_id, site_code):
+@base_blueprint.route("/classify/<int:patient_id>", methods=["PUT"])
+def classify(patient_id):
     """Classify single patient as configured"""
-    results = dict()
-    results["Condition"] = process_4_COPD_conditions(patient_id, site_code)
-    # We only consider COPD meds if the patient obtained the COPD condition
-    if results["Condition"]["matched"]:
-        results["MedicationRequest"] = process_4_COPD_medications(patient_id, site_code)
+    results = classify_for_COPD(patient_id)
+    results.update(classify_for_diabetes(patient_id))
     return results
-
 
 @base_blueprint.cli.command("classify")
 @click.argument("site")
 def classify_all(site):
     """Classify all patients found"""
     return process_patients(
-        process_functions=(process_4_COPD_conditions, process_4_COPD_medications),
+        process_functions=(classify_for_COPD, classify_for_diabetes),
         site=site,
-        require_all=True,
     )
 
 
 @base_blueprint.cli.command("declassify")
 @click.argument("site")
 def declassify_all(site):
-    """Clear the (potentially) persisted COPD condition generated during classify"""
-    return process_patients((remove_COPD_classification,), site)
+    """Clear the (potentially) persisted conditions generated during classify"""
+    return process_patients((remove_COPD_classification, remove_diabetes_classification), site)
 
 
-def process_patients(process_functions, site, require_all=False):
+def process_patients(process_functions, site):
     """
-    Process all patients with given list of functions.
+    Process all patients for given site, with given list of functions.
 
     :param process_functions: ordered list of functions to call on each respective patient
     :param site: name of site being processed, i.e. "uw"
-    :param require_all: set True to treat ordered list of process functions with a logical
-      AND, i.e. bail on each patient with first function in list to fail
     """
     start = timeit.default_timer()
-    results = dict()
     # Obtain batches of Patients with site identifier, process each in turn
     processed_patients = 0
     matched_patients = 0
@@ -110,17 +99,12 @@ def process_patients(process_functions, site, require_all=False):
     for bundle in next_resource_bundle("Patient", search_params=search_params):
         assert bundle["resourceType"] == "Bundle"
         for item in bundle.get("entry", []):
-            matched = False
             assert item["resource"]["resourceType"] == "Patient"
+            results = dict()
             for process_function in process_functions:
-                results = process_function(
-                    patient_id=item["resource"]["id"], site_code=site
-                )
-                matched = matched or results.get("matched", False)
-                if require_all and not matched:
-                    break
+                results.update(process_function(item["resource"]["id"]))
             processed_patients += 1
-            if matched:
+            if any(key.endswith("matched") for key in results.keys()):
                 matched_patients += 1
 
     duration = timeit.default_timer() - start
