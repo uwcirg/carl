@@ -1,4 +1,5 @@
 """FHIR Observation module"""
+from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.paging import next_resource_bundle
 from carl.modules.reference import Reference
 from carl.modules.resource import Resource
@@ -27,11 +28,12 @@ class Observation(Resource):
         return self._fields.get("valueQuantity")
 
     @valuequantity.setter
-    def value_quantity(self, valuequantity):
+    def valuequantity(self, valuequantity):
         self._fields["valueQuantity"] = valuequantity
 
-    def value_quantity_above_threshold(self, threshold):
-        assert self.valuequantity
+    def valuequantity_above_threshold(self, threshold):
+        if not self.valuequantity:
+            return None
         return self.valuequantity['value'] > float(threshold)
 
     @property
@@ -40,7 +42,19 @@ class Observation(Resource):
 
     @subject.setter
     def subject(self, resource):
-        self._fields["subject"] = Reference(resource)
+        if isinstance(resource, Reference):
+            self._fields["subject"] = resource
+        else:
+            self._fields["subject"] = Reference(resource)
+
+    @classmethod
+    def from_fhir(cls, data):
+        """Deserialize from json (FHIR) data"""
+        instance = cls()
+        instance.code = CodeableConcept.from_fhir(data["code"])
+        instance.subject = Reference.from_fhir(data["subject"])
+        instance.valuequantity = ValueQuantity.from_fhir(data["valueQuantity"])
+        return instance
 
     @staticmethod
     def unique_params():
@@ -58,15 +72,8 @@ def patient_observations(patient_id, resource_coding):
                 "code": f"{resource_coding.system}|{resource_coding.code}"
             }):
         for entry in bundle.get("entry", []):
-            obs = Observation()
-            try:
-                codings = entry["resource"][code_attribute]["coding"]
-            except KeyError as deets:
-                raise ValueError(f"failed lookup in {entry}: {deets}")
-            for coding in codings:
-                patient_codings.add(
-                    Coding(system=coding["system"], code=coding["code"])
-                )
+            obs = Observation.from_fhir(entry["resource"])
+            patient_obs.append(obs)
 
-    return patient_codings.intersection(resource_codings)
+    return patient_obs
 

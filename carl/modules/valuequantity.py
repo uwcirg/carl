@@ -52,4 +52,13 @@ class ValueQuantity(Resource):
     def unique_params():
         return tuple(["value", "unit", "system"])
 
+    @classmethod
+    def from_fhir(cls, data):
+        """Deserialize from json (FHIR) data"""
+        instance = cls()
+        instance.code = data["code"]
+        instance.value = data["value"]
+        instance.unit = data["unit"]
+        instance.system = data["system"]
+        return instance
 

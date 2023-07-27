@@ -15,6 +15,7 @@ from carl.modules.paging import next_page_link_from_bundle, next_resource_bundle
 from carl.modules.patient import Patient, patient_canonical_identifier
 from carl.modules.reference import Reference
 from carl.modules.valueset import ValueSet, valueset_codings
+from carl.modules.valuequantity import ValueQuantity
 
 PATIENT_ID = "def123"
 
@@ -61,25 +62,26 @@ def diabetes_observation():
     d.subject = Patient(PATIENT_ID)
     return d
 
+
 @fixture
 def diabetes_neg_observation(diabetes_observation):
-    diabetes_observation.value_quantity = {
-        "value": 4.95,
+    vq = ValueQuantity.from_fhir({
+        "value": "4.95",
         "unit": "%",
         "system": "http://unitsofmeasure.org",
-        "code": "%"
-    }
+        "code": "%"})
+    diabetes_observation.value_quantity = vq
     return diabetes_observation
 
 
 @fixture
 def diabetes_pos_observation(diabetes_observation):
-    diabetes_observation.value_quantity = {
+    diabetes_observation.valuequantity = ValueQuantity.from_fhir({
         "value": 6.70,
         "unit": "%",
         "system": "http://unitsofmeasure.org",
         "code": "%"
-    }
+    })
     return diabetes_observation
 
 @fixture
@@ -157,7 +159,6 @@ def test_diabetes_obs_patient(diabetes_observation):
         {
             "code": f"{A1C_observation_coding.system}|{A1C_observation_coding.code}",
             "subject": PATIENT_ID
-
         }
     )
     assert diabetes_observation.search_url() == f"Observation?{params}"
@@ -198,8 +199,15 @@ def test_canonical_identifier(mocker, patient_data):
 
 
 def test_diabetes_obs_pos_threshold(diabetes_pos_observation):
-    assert diabetes_pos_observation.value_quantity_above_threshold("6.0")
+    assert diabetes_pos_observation.valuequantity_above_threshold("6.0")
 
 
 def test_diabetes_obs_pos_threshold(diabetes_neg_observation):
-    assert not diabetes_neg_observation.value_quantity_above_threshold("6.0")
+    assert not diabetes_neg_observation.valuequantity_above_threshold("6.0")
+
+
+def test_observation_serializers(diabetes_pos_observation):
+    obs = Observation.from_fhir(diabetes_pos_observation.as_fhir())
+    assert obs.code == diabetes_pos_observation.code
+    assert obs.subject.as_fhir() == diabetes_pos_observation.subject.as_fhir()
+    assert obs.valuequantity.as_fhir() == diabetes_pos_observation.valuequantity.as_fhir()
