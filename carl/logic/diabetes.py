@@ -44,7 +44,7 @@ def process_labs(patient_id):
     labs = patient_observations(patient_id=patient_id, resource_coding=A1C_observation_coding)
     results = {
         "patient_id": patient_id,
-        A1C_observation_coding.display: len(labs),
+        A1C_observation_coding.code: len(labs),
     }
     for obs in labs:
         if obs.value_quantity_above_threshold(threshold):
