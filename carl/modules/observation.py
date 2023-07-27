@@ -66,7 +66,7 @@ def patient_observations(patient_id, resource_coding):
     """
     patient_obs = list()
     for bundle in next_resource_bundle(
-            resource_type=Observation,
+            resource_type="Observation",
             search_params={
                 "subject": patient_id,
                 "code": f"{resource_coding.system}|{resource_coding.code}"
