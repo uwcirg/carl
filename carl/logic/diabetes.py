@@ -91,14 +91,10 @@ def classify_for_diabetes(patient_id):
     if any(key.endswith("matched") for key in results.keys()):
         return tag_with_condition(results)
 
-    current_app.logger.debug(f"post crit 1, len {len(results)}")
-
     # Criteria #2
     results.update(has_medications(patient_id, DIABETES_SPECIFIC_MEDICATION_VALUESET_URI))
     if any(key.endswith("matched") for key in results.keys()):
         return tag_with_condition(results)
-
-    current_app.logger.debug(f"post crit 2, len {len(results)}")
 
     # Criteria #3-a
     related_results = has_medications(patient_id, DIABETES_RELATED_MEDICATION_VALUESET_URI)
@@ -106,12 +102,9 @@ def classify_for_diabetes(patient_id):
         results.update(related_results)
         return results
 
-    current_app.logger.debug(f"post crit 3-a, len {len(results)} + len {len(related_results)}")
-
     # Criteria #3-b
     diagnoses_results = process_diagnoses(patient_id)
     if not any(key.endswith("matched") for key in related_results.keys()):
-        current_app.logger.debug(f"post crit 3-b, len {len(results)} + len {len(related_results)} + len {len(diagnoses_results)}")
         results.update(related_results)
         results.update(diagnoses_results)
         return results
