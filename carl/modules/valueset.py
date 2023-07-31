@@ -36,7 +36,7 @@ def valueset_codings(url):
     bundle = response.json()
     if bundle["total"] != 1:
         raise ValueError(
-            "Expected ValueSet {url} not found; Did `flask bootstrap` get called?"
+            f"Expected ValueSet {url} not found; Did `flask bootstrap` get called?"
         )
 
     value_set = bundle["entry"][0]["resource"]
