@@ -103,7 +103,8 @@ def classify_for_diabetes(patient_id):
     # Criteria #3-a
     related_results = has_medications(patient_id, DIABETES_RELATED_MEDICATION_VALUESET_URI)
     if not any(key.endswith("matched") for key in related_results.keys()):
-        return results.update(related_results)
+        results.update(related_results)
+        return results
 
     current_app.logger.debug(f"post crit 3-a, len {len(results)} + len {len(related_results)}")
 
@@ -111,11 +112,15 @@ def classify_for_diabetes(patient_id):
     diagnoses_results = process_diagnoses(patient_id)
     if not any(key.endswith("matched") for key in related_results.keys()):
         current_app.logger.debug(f"post crit 3-b, len {len(results)} + len {len(related_results)} + len {len(diagnoses_results)}")
-        return results.update(related_results).update(diagnoses_results)
+        results.update(related_results)
+        results.update(diagnoses_results)
+        return results
 
     # still here implies related_medications and process_diagnosis both returned true,
     # i.e. Criteria 3 is true
-    return tag_with_condition(results.update(related_results).update(diagnoses_results))
+    results.update(related_results)
+    results.update(diagnoses_results)
+    return tag_with_condition(results)
 
 
 def remove_diabetes_classification(patient_id):
