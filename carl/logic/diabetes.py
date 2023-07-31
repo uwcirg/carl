@@ -48,7 +48,7 @@ def process_labs(patient_id):
     }
     for obs in labs:
         if obs.valuequantity_above_threshold(threshold):
-            results['HemoglobinA1C_matched'] = True
+            results['Hemoglobin-A1C-threshold_matched'] = True
             break
     return results
 
