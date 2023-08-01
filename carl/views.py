@@ -116,3 +116,22 @@ def process_patients(process_functions, site):
             "matched_patients": matched_patients,
         }
     )
+
+
+@base_blueprint.cli.command("valueset")
+@click.argument("resource_type")
+def generate_valueset(resource_type):
+    """Generate valueset of all given resources of requested type found"""
+    results = {}
+    for bundle in next_resource_bundle(resource_type):
+        for item in bundle.get("entry", []):
+            assert item["resource"]["resourceType"] == resource_type
+            # prune out duplicates - i.e. when same resource is assigned
+            # to hundreds of patients
+            assert len(item["resource"]["code"]["coding"]) == 1
+            key = '|'.join((
+                item["resource"]["code"]["coding"][0]["system"],
+                item["resource"]["code"]["coding"][0]["code"]))
+            results[key] = item["resource"]["code"]
+    return results
+
