@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import datetime
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
+import json
+from operator import itemgetter
 import timeit
 
 from carl.logic.copd import classify_for_COPD, remove_COPD_classification
@@ -128,9 +130,10 @@ def generate_valueset(resource_type, description):
     """Generate valueset of all given resources of requested type found"""
     seen = set()
     results = defaultdict(list)
-    for bundle in next_resource_bundle(resource_type):
+    for bundle in next_resource_bundle(resource_type, search_params={'_count': 500}):
         if len(results) > 2:
-            break
+            #break
+            pass
         for item in bundle.get("entry", []):
             assert item["resource"]["resourceType"] == resource_type
             assert len(item["resource"]["code"]["coding"]) == 1
@@ -151,49 +154,51 @@ def generate_valueset(resource_type, description):
     # repackage results for valueset
     include = []
     for system in results.keys():
-        include.append({"system": system, "concept": [v for v in results[system]]})
+        include.append({
+            "system": system,
+            "concept": [v for v in sorted(results[system], key=itemgetter("code"))]})
 
-        valueset = {
-            "resourceType": "ValueSet",
-            "meta": {
+    valueset = {
+        "resourceType": "ValueSet",
+        "meta": {
             "profile": [
-              "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+                "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
             ]
-            },
-            "text": {
+        },
+        "text": {
             "status": "generated",
-            "div": f"<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Codes for {description}&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
-            },
-            "url": f"http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-{description}",
-            "identifier": [
+            "div": f"<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+        },
+        "url": f"http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-{description.replace(' ', '-')}",
+        "identifier": [
             {
-              "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
-              "value": f"CNICS-{description}"
+                "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+                "value": f"CNICS-{description}"
             }
-            ],
-            "version": "20220428",
-            "name": f"CNICS {description}",
-            "status": "draft",
-            "experimental": True,
-            "date": datetime.now().strftime("%Y-%m-%d"),
-            "publisher": "CIRG",
-            "contact": [
+        ],
+        "version": datetime.now().strftime("%Y%m%d"),
+        "name": f"CNICS {description}",
+        "status": "draft",
+        "experimental": True,
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "publisher": "CIRG",
+        "contact": [
             {
-              "name": "CIRG project team",
-              "telecom": [
-                {
-                  "system": "url",
-                  "value": "https://www.cirg.washington.edu/"
-                }
-              ]
+                "name": "CIRG project team",
+                "telecom": [
+                    {
+                        "system": "url",
+                        "value": "https://www.cirg.washington.edu/"
+                    }
+                ]
             }
-            ],
-            "description": f"ValueSet including all the codings used by CNICS to define {description}",
-            "compose": {
-                "lockedDate": datetime.now().strftime("%Y-%m-%d"),
-                "include": include
-            }
+        ],
+        "description": f"ValueSet including all the codings used by CNICS to define {description}",
+        "compose": {
+            "lockedDate": datetime.now().strftime("%Y-%m-%d"),
+            "include": include
         }
+    } 
 
-    print(valueset)
+    print(json.dumps(valueset, indent=2))
 
