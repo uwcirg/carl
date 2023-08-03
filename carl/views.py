@@ -1,4 +1,6 @@
 import click
+from collections import defaultdict
+from datetime import datetime
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
 import timeit
@@ -64,6 +66,7 @@ def classify(patient_id):
     results.update(classify_for_diabetes(patient_id))
     return results
 
+
 @base_blueprint.cli.command("classify")
 @click.argument("site")
 def classify_all(site):
@@ -120,18 +123,77 @@ def process_patients(process_functions, site):
 
 @base_blueprint.cli.command("valueset")
 @click.argument("resource_type")
-def generate_valueset(resource_type):
+@click.argument("description")
+def generate_valueset(resource_type, description):
     """Generate valueset of all given resources of requested type found"""
-    results = {}
+    seen = set()
+    results = defaultdict(list)
     for bundle in next_resource_bundle(resource_type):
+        if len(results) > 2:
+            break
         for item in bundle.get("entry", []):
             assert item["resource"]["resourceType"] == resource_type
+            assert len(item["resource"]["code"]["coding"]) == 1
+            system = item["resource"]["code"]["coding"][0]["system"]
+            code = item["resource"]["code"]["coding"][0]["code"]
+
+            # Organize as needed for ValueSets, i.e. by system
+
             # prune out duplicates - i.e. when same resource is assigned
             # to hundreds of patients
-            assert len(item["resource"]["code"]["coding"]) == 1
-            key = '|'.join((
-                item["resource"]["code"]["coding"][0]["system"],
-                item["resource"]["code"]["coding"][0]["code"]))
-            results[key] = item["resource"]["code"]
-    return results
+            key = '|'.join((system, code))
+            if key in seen:
+                continue
+            seen.add(key)
+            display = item["resource"]["code"]["coding"][0]["display"]
+            results[system].append({"code": code, "display": display})
+
+    # repackage results for valueset
+    include = []
+    for system in results.keys():
+        include.append({"system": system, "concept": [v for v in results[system]]})
+
+        valueset = {
+            "resourceType": "ValueSet",
+            "meta": {
+            "profile": [
+              "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+            ]
+            },
+            "text": {
+            "status": "generated",
+            "div": f"<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Codes for {description}&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+            },
+            "url": f"http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-{description}",
+            "identifier": [
+            {
+              "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+              "value": f"CNICS-{description}"
+            }
+            ],
+            "version": "20220428",
+            "name": f"CNICS {description}",
+            "status": "draft",
+            "experimental": True,
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "publisher": "CIRG",
+            "contact": [
+            {
+              "name": "CIRG project team",
+              "telecom": [
+                {
+                  "system": "url",
+                  "value": "https://www.cirg.washington.edu/"
+                }
+              ]
+            }
+            ],
+            "description": f"ValueSet including all the codings used by CNICS to define {description}",
+            "compose": {
+                "lockedDate": datetime.now().strftime("%Y-%m-%d"),
+                "include": include
+            }
+        }
+
+    print(valueset)
 
