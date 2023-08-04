@@ -18,6 +18,11 @@ DIABETES_RELATED_MEDICATION_VALUESET_URI = \
 DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = \
     "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
 
+# ValueSet for all known diabetes Condition codings - should match "url" in:
+# ``carl.serialized.diabetes_conditions_valueset.json``
+DIABETES_CONDITIONS_VALUESET_URL = \
+    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-Diabetes-Conditions"
+
 # ValueSet for all known diabetes Diagnosis codings - should match "url" in:
 # ``carl.serialized.diabetes_diagnosis_valueset.json``
 DIABETES_DX_VALUESET_URI = (
@@ -54,7 +59,22 @@ def process_labs(patient_id):
 
 
 def process_diagnoses(patient_id):
-    return {"process_diagnoses": "not implemented"}
+    # process for conditions in value set
+    conditions = valueset_codings(DIABETES_CONDITIONS_VALUESET_URL)
+    positive_codings = patient_has(
+        patient_id=patient_id,
+        resource_type="Condition",
+        resource_codings=conditions,
+        code_attribute="code",
+    )
+    results = {
+        "patient_id": patient_id,
+        "Diabetes Condition codings found": len(positive_codings) > 0,
+    }
+    if not positive_codings:
+        return results
+    results["Diabetes-Conditions_matched"] = True
+    return results
 
 
 def has_medications(patient_id, medication_value_set):
@@ -63,6 +83,7 @@ def has_medications(patient_id, medication_value_set):
         patient_id=patient_id,
         resource_type="MedicationRequest",
         resource_codings=med_codings,
+        code_attribute="medicationCodeableConcept",
     )
     results = dict()
     results[f"{medication_value_set.split('/')[-1]} count"] = len(positive_codings)

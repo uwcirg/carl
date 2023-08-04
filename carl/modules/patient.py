@@ -43,7 +43,7 @@ def patient_has(patient_id, resource_type, resource_codings, code_attribute="cod
             try:
                 codings = entry["resource"][code_attribute]["coding"]
             except KeyError as deets:
-                raise ValueError(f"failed lookup in {entry}: {deets}")
+                raise ValueError(f"failed lookup, '{deets}' not in {entry}")
             for coding in codings:
                 patient_codings.add(
                     Coding(system=coding["system"], code=coding["code"])
