@@ -1,10 +1,5 @@
 """FHIR ValueQuantity module"""
-from flask import current_app
-
-from carl.modules.codeableconcept import CodeableConcept
-from carl.modules.patient import Patient
-from carl.modules.reference import Reference
-from carl.modules.resource import Resource, persist_resource
+from carl.modules.resource import Resource
 
 
 class ValueQuantity(Resource):

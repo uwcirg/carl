@@ -80,7 +80,7 @@ def diabetes_neg_observation(diabetes_observation):
 @fixture
 def diabetes_pos_observation(diabetes_observation):
     diabetes_observation.valuequantity = ValueQuantity.from_fhir(
-        {"value": 6.70, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%"}
+        {"value": 6.50, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%"}
     )
     return diabetes_observation
 
@@ -202,11 +202,11 @@ def test_canonical_identifier(mocker, patient_data):
 
 def test_diabetes_obs_pos_threshold(diabetes_pos_observation):
     assert diabetes_pos_observation.valuequantity.value == 6.5
-    assert diabetes_pos_observation.valuequantity_above_threshold("6.0")
+    assert diabetes_pos_observation.valuequantity_above_threshold("6.5")
     assert not diabetes_pos_observation.valuequantity_above_threshold("9.0")
 
 
-def test_diabetes_obs_pos_threshold(diabetes_neg_observation):
+def test_diabetes_obs_neg_threshold(diabetes_neg_observation):
     assert float(diabetes_neg_observation.valuequantity.value) == 4.95
     assert not diabetes_neg_observation.valuequantity_above_threshold("6.0")
     assert diabetes_neg_observation.valuequantity_above_threshold("2.0")

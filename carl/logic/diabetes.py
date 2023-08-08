@@ -5,7 +5,7 @@ from carl.modules.coding import Coding
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.condition import Condition, mark_patient_with_condition
 from carl.modules.observation import patient_observations
-from carl.modules.patient import Patient, patient_canonical_identifier, patient_has
+from carl.modules.patient import Patient, patient_has
 from carl.modules.resource import delete_resource
 from carl.modules.valueset import valueset_codings
 
@@ -13,8 +13,10 @@ from carl.modules.valueset import valueset_codings
 # ``carl.serialized.diabetes_related_medication_valueset.json``
 # ``carl.serialized.diabetes_specific_medication_valueset.json``
 
-DIABETES_RELATED_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
-DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
+DIABETES_RELATED_MEDICATION_VALUESET_URI =\
+    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
+DIABETES_SPECIFIC_MEDICATION_VALUESET_URI =\
+    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
 
 # ValueSet for all known diabetes Condition codings - should match "url" in:
 # ``carl.serialized.diabetes_conditions_valueset.json``
