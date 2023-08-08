@@ -12,25 +12,17 @@ from carl.modules.valueset import valueset_codings
 # ValueSets for all known diabetes MedicationRequest codings - should match "url"s in:
 # ``carl.serialized.diabetes_related_medication_valueset.json``
 # ``carl.serialized.diabetes_specific_medication_valueset.json``
-
-DIABETES_RELATED_MEDICATION_VALUESET_URI = (
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
-)
-DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = (
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
-)
+vs_base = "http://cnics-cirg.washington.edu/fhir/ValueSet/"
+DIABETES_RELATED_MEDICATION_VALUESET_URI = f"{vs_base}CNICS-diabetes-related-medication-codings"
+DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = f"{vs_base}CNICS-diabetes-specific-medication-codings"
 
 # ValueSet for all known diabetes Condition codings - should match "url" in:
 # ``carl.serialized.diabetes_conditions_valueset.json``
-DIABETES_CONDITIONS_VALUESET_URL = (
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-Diabetes-Conditions"
-)
+DIABETES_CONDITIONS_VALUESET_URL = f"{vs_base}CNICS-Diabetes-Conditions"
 
 # ValueSet for all known diabetes Diagnosis codings - should match "url" in:
 # ``carl.serialized.diabetes_diagnosis_valueset.json``
-DIABETES_DX_VALUESET_URI = (
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-diagnosis-codings"
-)
+DIABETES_DX_VALUESET_URI = f"{vs_base}CNICS-diabetes-diagnosis-codings"
 
 # Observation (lab) code of interest
 A1C_observation_coding = Coding(
