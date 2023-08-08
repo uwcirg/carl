@@ -65,24 +65,25 @@ def diabetes_observation():
 
 @fixture
 def diabetes_neg_observation(diabetes_observation):
-    vq = ValueQuantity.from_fhir({
-        "value": "4.95",
-        "unit": "%",
-        "system": "http://unitsofmeasure.org",
-        "code": "%"})
+    vq = ValueQuantity.from_fhir(
+        {
+            "value": "4.95",
+            "unit": "%",
+            "system": "http://unitsofmeasure.org",
+            "code": "%",
+        }
+    )
     diabetes_observation.valuequantity = vq
     return diabetes_observation
 
 
 @fixture
 def diabetes_pos_observation(diabetes_observation):
-    diabetes_observation.valuequantity = ValueQuantity.from_fhir({
-        "value": 6.70,
-        "unit": "%",
-        "system": "http://unitsofmeasure.org",
-        "code": "%"
-    })
+    diabetes_observation.valuequantity = ValueQuantity.from_fhir(
+        {"value": 6.70, "unit": "%", "system": "http://unitsofmeasure.org", "code": "%"}
+    )
     return diabetes_observation
+
 
 @fixture
 def patient_data(datadir):
@@ -158,7 +159,7 @@ def test_diabetes_obs_patient(diabetes_observation):
     params = urlencode(
         {
             "code": f"{A1C_observation_coding.system}|{A1C_observation_coding.code}",
-            "subject": PATIENT_ID
+            "subject": PATIENT_ID,
         }
     )
     assert diabetes_observation.search_url() == f"Observation?{params}"
@@ -191,7 +192,8 @@ def test_canonical_identifier(mocker, patient_data):
 
     # mock HAPI result from patient lookup
     mocker.patch(
-        "carl.modules.patient.requests.get", return_value=MockResponse(data=patient_data)
+        "carl.modules.patient.requests.get",
+        return_value=MockResponse(data=patient_data),
     )
 
     found = patient_canonical_identifier(patient_id=1, site_code="uw")
@@ -214,4 +216,6 @@ def test_observation_serializers(diabetes_pos_observation):
     obs = Observation.from_fhir(diabetes_pos_observation.as_fhir())
     assert obs.code == diabetes_pos_observation.code
     assert obs.subject.as_fhir() == diabetes_pos_observation.subject.as_fhir()
-    assert obs.valuequantity.as_fhir() == diabetes_pos_observation.valuequantity.as_fhir()
+    assert (
+        obs.valuequantity.as_fhir() == diabetes_pos_observation.valuequantity.as_fhir()
+    )
