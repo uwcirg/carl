@@ -168,11 +168,11 @@ def generate_valueset(resource_type, description):
         "text": {
             "status": "generated",
             "div": '<div xmlns="http://www.w3.org/1999/xhtml">\n\t\t\t'
-                   f'<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t'
-                   '<p>Developed by: CIRG</p>\n\t\t</div>',
+            f"<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t"
+            "<p>Developed by: CIRG</p>\n\t\t</div>",
         },
         "url": "http://cnics-cirg.washington.edu/"
-               f"fhir/ValueSet/CNICS-{description.replace(' ', '-')}",
+        f"fhir/ValueSet/CNICS-{description.replace(' ', '-')}",
         "identifier": [
             {
                 "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",

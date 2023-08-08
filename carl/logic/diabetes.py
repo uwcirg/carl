@@ -13,10 +13,8 @@ from carl.modules.valueset import valueset_codings
 # ``carl.serialized.diabetes_related_medication_valueset.json``
 # ``carl.serialized.diabetes_specific_medication_valueset.json``
 
-DIABETES_RELATED_MEDICATION_VALUESET_URI =\
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
-DIABETES_SPECIFIC_MEDICATION_VALUESET_URI =\
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
+DIABETES_RELATED_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
+DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
 
 # ValueSet for all known diabetes Condition codings - should match "url" in:
 # ``carl.serialized.diabetes_conditions_valueset.json``
