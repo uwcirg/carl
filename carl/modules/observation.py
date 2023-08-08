@@ -34,7 +34,7 @@ class Observation(Resource):
     def valuequantity_above_threshold(self, threshold):
         if not self.valuequantity:
             return None
-        return self.valuequantity.value > float(threshold)
+        return self.valuequantity.value >= float(threshold)
 
     @property
     def subject(self):

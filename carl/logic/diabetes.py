@@ -49,7 +49,7 @@ def process_labs(patient_id):
     labs = patient_observations(patient_id=patient_id, resource_coding=A1C_observation_coding)
     results = {
         "patient_id": patient_id,
-        A1C_observation_coding.code: len(labs),
+        f"{A1C_observation_coding.code} count": len(labs),
     }
     for obs in labs:
         if obs.valuequantity_above_threshold(threshold):
@@ -125,7 +125,7 @@ def classify_for_diabetes(patient_id):
 
     # Criteria #3-b
     diagnoses_results = process_diagnoses(patient_id)
-    if not any(key.endswith("matched") for key in related_results.keys()):
+    if not any(key.endswith("matched") for key in diagnoses_results.keys()):
         results.update(related_results)
         results.update(diagnoses_results)
         return results
