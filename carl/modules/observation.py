@@ -62,18 +62,17 @@ class Observation(Resource):
 
 
 def patient_observations(patient_id, resource_coding):
-    """Return list of Observations for given patient, with given coding
-    """
+    """Return list of Observations for given patient, with given coding"""
     patient_obs = list()
     for bundle in next_resource_bundle(
-            resource_type="Observation",
-            search_params={
-                "subject": patient_id,
-                "code": f"{resource_coding.system}|{resource_coding.code}"
-            }):
+        resource_type="Observation",
+        search_params={
+            "subject": patient_id,
+            "code": f"{resource_coding.system}|{resource_coding.code}",
+        },
+    ):
         for entry in bundle.get("entry", []):
             obs = Observation.from_fhir(entry["resource"])
             patient_obs.append(obs)
 
     return patient_obs
-

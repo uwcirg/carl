@@ -83,7 +83,9 @@ def process_4_COPD_medications(patient_id):
     if not positive_codings:
         return results
 
-    return mark_patient_with_condition(patient_id, CNICS_COPD_medication_coding, results)
+    return mark_patient_with_condition(
+        patient_id, CNICS_COPD_medication_coding, results
+    )
 
 
 def classify_for_COPD(patient_id):

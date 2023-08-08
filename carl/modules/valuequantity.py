@@ -61,4 +61,3 @@ class ValueQuantity(Resource):
         instance.unit = data["unit"]
         instance.system = data["system"]
         return instance
-

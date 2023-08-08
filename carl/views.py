@@ -83,7 +83,9 @@ def classify_all(site):
 @click.argument("site")
 def declassify_all(site):
     """Clear the (potentially) persisted conditions generated during classify"""
-    return process_patients((remove_COPD_classification, remove_diabetes_classification), site)
+    return process_patients(
+        (remove_COPD_classification, remove_diabetes_classification), site
+    )
 
 
 def process_patients(process_functions, site):
@@ -130,10 +132,7 @@ def generate_valueset(resource_type, description):
     """Generate valueset of all given resources of requested type found"""
     seen = set()
     results = defaultdict(list)
-    for bundle in next_resource_bundle(resource_type, search_params={'_count': 500}):
-        if len(results) > 2:
-            #break
-            pass
+    for bundle in next_resource_bundle(resource_type, search_params={"_count": 500}):
         for item in bundle.get("entry", []):
             assert item["resource"]["resourceType"] == resource_type
             assert len(item["resource"]["code"]["coding"]) == 1
@@ -144,7 +143,7 @@ def generate_valueset(resource_type, description):
 
             # prune out duplicates - i.e. when same resource is assigned
             # to hundreds of patients
-            key = '|'.join((system, code))
+            key = "|".join((system, code))
             if key in seen:
                 continue
             seen.add(key)
@@ -154,26 +153,27 @@ def generate_valueset(resource_type, description):
     # repackage results for valueset
     include = []
     for system in results.keys():
-        include.append({
-            "system": system,
-            "concept": [v for v in sorted(results[system], key=itemgetter("code"))]})
+        include.append(
+            {
+                "system": system,
+                "concept": [v for v in sorted(results[system], key=itemgetter("code"))],
+            }
+        )
 
     valueset = {
         "resourceType": "ValueSet",
         "meta": {
-            "profile": [
-                "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
-            ]
+            "profile": ["http://hl7.org/fhir/StructureDefinition/shareablevalueset"]
         },
         "text": {
             "status": "generated",
-            "div": f"<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+            "div": f'<div xmlns="http://www.w3.org/1999/xhtml">\n\t\t\t<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>',
         },
         "url": f"http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-{description.replace(' ', '-')}",
         "identifier": [
             {
                 "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
-                "value": f"CNICS-{description}"
+                "value": f"CNICS-{description}",
             }
         ],
         "version": datetime.now().strftime("%Y%m%d"),
@@ -186,19 +186,15 @@ def generate_valueset(resource_type, description):
             {
                 "name": "CIRG project team",
                 "telecom": [
-                    {
-                        "system": "url",
-                        "value": "https://www.cirg.washington.edu/"
-                    }
-                ]
+                    {"system": "url", "value": "https://www.cirg.washington.edu/"}
+                ],
             }
         ],
         "description": f"ValueSet including all the codings used by CNICS to define {description}",
         "compose": {
             "lockedDate": datetime.now().strftime("%Y-%m-%d"),
-            "include": include
-        }
-    } 
+            "include": include,
+        },
+    }
 
     print(json.dumps(valueset, indent=2))
-

@@ -23,7 +23,11 @@ def next_resource_bundle(resource_type, search_params=None):
     :param search_params: optional search criteria to filter or order results
     :returns: bundle per page until exhausted
     """
-    resource_string = resource_type.RESOURCE_TYPE if isinstance(resource_type, Resource) else resource_type
+    resource_string = (
+        resource_type.RESOURCE_TYPE
+        if isinstance(resource_type, Resource)
+        else resource_type
+    )
     url = f"{FHIR_SERVER_URL}{resource_string}"
     response = requests.get(url=url, params=search_params, timeout=30)
     if has_app_context():

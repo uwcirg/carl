@@ -13,15 +13,14 @@ from carl.modules.valueset import valueset_codings
 # ``carl.serialized.diabetes_related_medication_valueset.json``
 # ``carl.serialized.diabetes_specific_medication_valueset.json``
 
-DIABETES_RELATED_MEDICATION_VALUESET_URI = \
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
-DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = \
-    "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
+DIABETES_RELATED_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings"
+DIABETES_SPECIFIC_MEDICATION_VALUESET_URI = "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-specific-medication-codings"
 
 # ValueSet for all known diabetes Condition codings - should match "url" in:
 # ``carl.serialized.diabetes_conditions_valueset.json``
-DIABETES_CONDITIONS_VALUESET_URL = \
+DIABETES_CONDITIONS_VALUESET_URL = (
     "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-Diabetes-Conditions"
+)
 
 # ValueSet for all known diabetes Diagnosis codings - should match "url" in:
 # ``carl.serialized.diabetes_diagnosis_valueset.json``
@@ -33,7 +32,7 @@ DIABETES_DX_VALUESET_URI = (
 A1C_observation_coding = Coding(
     system="https://cnics.cirg.washington.edu/test-name",
     code="Hemoglobin A1C",
-    display="Hemoglobin A1C"
+    display="Hemoglobin A1C",
 )
 
 # Designated Condition.coding assigned if patient found to meet the diabetes criteria
@@ -46,14 +45,16 @@ CNICS_diabetes_coding = Coding(
 
 def process_labs(patient_id):
     threshold = 6.5
-    labs = patient_observations(patient_id=patient_id, resource_coding=A1C_observation_coding)
+    labs = patient_observations(
+        patient_id=patient_id, resource_coding=A1C_observation_coding
+    )
     results = {
         "patient_id": patient_id,
         f"{A1C_observation_coding.code} count": len(labs),
     }
     for obs in labs:
         if obs.valuequantity_above_threshold(threshold):
-            results['Hemoglobin-A1C-threshold_matched'] = True
+            results["Hemoglobin-A1C-threshold_matched"] = True
             break
     return results
 
@@ -102,6 +103,7 @@ def classify_for_diabetes(patient_id):
     - 2) MedicationRequest for any diabetes-specific medication
     - 3) MedicationRequest for any diabetes-related medication AND Diagnosis for diabetes
     """
+
     def tag_with_condition(results):
         return mark_patient_with_condition(patient_id, CNICS_diabetes_coding, results)
 
@@ -113,12 +115,16 @@ def classify_for_diabetes(patient_id):
         return tag_with_condition(results)
 
     # Criteria #2
-    results.update(has_medications(patient_id, DIABETES_SPECIFIC_MEDICATION_VALUESET_URI))
+    results.update(
+        has_medications(patient_id, DIABETES_SPECIFIC_MEDICATION_VALUESET_URI)
+    )
     if any(key.endswith("matched") for key in results.keys()):
         return tag_with_condition(results)
 
     # Criteria #3-a
-    related_results = has_medications(patient_id, DIABETES_RELATED_MEDICATION_VALUESET_URI)
+    related_results = has_medications(
+        patient_id, DIABETES_RELATED_MEDICATION_VALUESET_URI
+    )
     if not any(key.endswith("matched") for key in related_results.keys()):
         results.update(related_results)
         return results

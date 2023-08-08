@@ -12,7 +12,8 @@ class Reference(object):
     def from_fhir(cls, data):
         """Deserialize from json (FHIR) data"""
         from carl.modules.patient import Patient
-        ref_deets = data.get("reference", "/").split('/')
+
+        ref_deets = data.get("reference", "/").split("/")
         if not ref_deets[0]:
             raise ValueError(f"can't deserialize reference: {data}")
         for cls in (Patient,):
@@ -20,7 +21,9 @@ class Reference(object):
                 ref = ref_deets[1]
                 break
         if not ref:
-            raise ValueError(f"don't know how to deserialize reference of type: {ref_deets[0]}")
+            raise ValueError(
+                f"don't know how to deserialize reference of type: {ref_deets[0]}"
+            )
         return cls(ref)
 
     def value_param(self):
