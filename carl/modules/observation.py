@@ -53,7 +53,9 @@ class Observation(Resource):
         instance = cls()
         instance.code = CodeableConcept.from_fhir(data["code"])
         instance.subject = Reference.from_fhir(data["subject"])
-        instance.valuequantity = ValueQuantity.from_fhir(data["valueQuantity"])
+        instance.valuequantity = None
+        if "valueQuantity" in data:
+            instance.valuequantity = ValueQuantity.from_fhir(data["valueQuantity"])
         return instance
 
     @staticmethod

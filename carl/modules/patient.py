@@ -54,6 +54,9 @@ def patient_has(patient_id, resource_type, resource_codings, code_attribute="cod
 
 def patient_canonical_identifier(patient_id, site_code):
     """Return system|value identifier if patient has one for preferred system"""
+    if not site_code:
+        return
+
     url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
     response = requests.get(url, timeout=30)
     if has_app_context():

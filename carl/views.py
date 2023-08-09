@@ -70,7 +70,7 @@ def classify(patient_id):
 
 
 @base_blueprint.cli.command("classify")
-@click.argument("site")
+@click.argument("site", nargs=-1)
 def classify_all(site):
     """Classify all patients found"""
     return process_patients(
@@ -80,7 +80,7 @@ def classify_all(site):
 
 
 @base_blueprint.cli.command("declassify")
-@click.argument("site")
+@click.argument("site", nargs=-1)
 def declassify_all(site):
     """Clear the (potentially) persisted conditions generated during classify"""
     return process_patients(
@@ -93,16 +93,21 @@ def process_patients(process_functions, site):
     Process all patients for given site, with given list of functions.
 
     :param process_functions: ordered list of functions to call on each respective patient
-    :param site: name of site being processed, i.e. "uw"
+    :param site: name of site being processed, i.e. "uw", or None for all sites
     """
     start = timeit.default_timer()
-    # Obtain batches of Patients with site identifier, process each in turn
+    # Obtain batches of Patients (with site identifier if requested),
+    # process each in turn
     processed_patients = 0
     matched_patients = 0
-    patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
-    # To query on system portion only of an identifier, must include
-    # trailing '|' used customarily to delimit `system|value`
-    search_params = {"identifier": patient_identifier_system + "|"}
+    search_params = None
+    patient_identifier_system = None
+    if site:
+        patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
+        # To query on system portion only of an identifier, must include
+        # trailing '|' used customarily to delimit `system|value`
+        search_params = {"identifier": patient_identifier_system + "|"}
+
     for bundle in next_resource_bundle("Patient", search_params=search_params):
         assert bundle["resourceType"] == "Bundle"
         for item in bundle.get("entry", []):
