@@ -24,6 +24,14 @@ class Observation(Resource):
         self._fields["code"] = codeable_concept
 
     @property
+    def valueinteger(self):
+        return self._fields.get("valueInteger")
+
+    @valueinteger.setter
+    def valueinteger(self, value):
+        self._fields["valueInteger"] = value
+
+    @property
     def valuequantity(self):
         return self._fields.get("valueQuantity")
 

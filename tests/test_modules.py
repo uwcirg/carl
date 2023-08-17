@@ -237,6 +237,10 @@ def test_canonical_identifier(mocker, patient_data):
     assert found == "https://cnics.cirg.washington.edu/site-patient-id/uw|UW:517"
 
 
+def test_diabetes_obs_no_value(diabetes_observation):
+    assert diabetes_observation.value_above_threshold("6.5") is None
+
+
 def test_diabetes_obs_pos_threshold(diabetes_pos_observation):
     assert diabetes_pos_observation.valuequantity.value == 6.5
     assert diabetes_pos_observation.value_above_threshold("6.5")
