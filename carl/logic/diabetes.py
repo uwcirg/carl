@@ -53,7 +53,7 @@ def process_labs(patient_id):
         f"{A1C_observation_coding.code} count": len(labs),
     }
     for obs in labs:
-        if obs.valuequantity_above_threshold(threshold):
+        if obs.value_above_threshold(threshold):
             results["Hemoglobin-A1C-threshold_matched"] = True
             break
     return results

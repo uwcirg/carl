@@ -86,6 +86,46 @@ def diabetes_pos_observation(diabetes_observation):
 
 
 @fixture
+def diabetes_intvalue_observation():
+    obs = {
+      "resourceType": "Observation",
+      "id": "123466",
+      "meta": {
+        "versionId": "1",
+        "lastUpdated": "2023-06-08T19:05:12.667+00:00",
+        "source": "#opIuJ7UPXEAMWTSK",
+        "profile": ["http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",]
+      },
+      "identifier": [{
+        "system": "https://cnics.cirg.washington.edu/lab/site-record-id/cwru",
+        "value": "45_341418346"
+      }],
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "laboratory",
+          "display": "laboratory"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "https://cnics.cirg.washington.edu/test-name",
+          "code": "Hemoglobin A1C",
+          "display": "Hemoglobin A1C"
+        }],
+        "text": "Hemoglobin A1C"
+      },
+      "subject": {
+        "reference": "Patient/123463"
+      },
+      "effectiveDateTime": "2021-09-13",
+      "valueInteger": 7
+    }
+    return Observation.from_fhir(obs)
+
+
+@fixture
 def patient_data(datadir):
     return load_jsondata(datadir, "patient.json")
 
@@ -199,14 +239,18 @@ def test_canonical_identifier(mocker, patient_data):
 
 def test_diabetes_obs_pos_threshold(diabetes_pos_observation):
     assert diabetes_pos_observation.valuequantity.value == 6.5
-    assert diabetes_pos_observation.valuequantity_above_threshold("6.5")
-    assert not diabetes_pos_observation.valuequantity_above_threshold("9.0")
+    assert diabetes_pos_observation.value_above_threshold("6.5")
+    assert not diabetes_pos_observation.value_above_threshold("9.0")
 
 
 def test_diabetes_obs_neg_threshold(diabetes_neg_observation):
     assert float(diabetes_neg_observation.valuequantity.value) == 4.95
-    assert not diabetes_neg_observation.valuequantity_above_threshold("6.0")
-    assert diabetes_neg_observation.valuequantity_above_threshold("2.0")
+    assert not diabetes_neg_observation.value_above_threshold("6.0")
+    assert diabetes_neg_observation.value_above_threshold("2.0")
+
+
+def test_diabetes_obs_intvalue(diabetes_intvalue_observation):
+    assert diabetes_intvalue_observation.value_above_threshold("6.5")
 
 
 def test_observation_serializers(diabetes_pos_observation):

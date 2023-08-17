@@ -31,10 +31,11 @@ class Observation(Resource):
     def valuequantity(self, valuequantity):
         self._fields["valueQuantity"] = valuequantity
 
-    def valuequantity_above_threshold(self, threshold):
-        if not self.valuequantity:
-            return None
-        return float(self.valuequantity.value) >= float(threshold)
+    def value_above_threshold(self, threshold):
+        if self.valuequantity:
+            return float(self.valuequantity.value) >= float(threshold)
+        if self.valueinteger:
+            return float(self.valueinteger) >= float(threshold)
 
     @property
     def subject(self):
@@ -53,9 +54,10 @@ class Observation(Resource):
         instance = cls()
         instance.code = CodeableConcept.from_fhir(data["code"])
         instance.subject = Reference.from_fhir(data["subject"])
-        instance.valuequantity = None
         if "valueQuantity" in data:
             instance.valuequantity = ValueQuantity.from_fhir(data["valueQuantity"])
+        if "valueInteger" in data:
+            instance.valueinteger = int(data["valueInteger"])
         return instance
 
     @staticmethod
