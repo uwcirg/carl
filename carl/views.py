@@ -100,7 +100,7 @@ def process_patients(process_functions, site):
     # process each in turn
     processed_patients = 0
     matched_patients = 0
-    search_params = None
+    search_params = {"_count": 512} # reduce round trips
     patient_identifier_system = None
     if site:
         patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
@@ -108,16 +108,21 @@ def process_patients(process_functions, site):
         # trailing '|' used customarily to delimit `system|value`
         search_params = {"identifier": patient_identifier_system + "|"}
 
+    # cache entries and then process.  necessary as the HAPI paging system
+    # can time out before classification completes.
+    entries = []
     for bundle in next_resource_bundle("Patient", search_params=search_params):
         assert bundle["resourceType"] == "Bundle"
-        for item in bundle.get("entry", []):
-            assert item["resource"]["resourceType"] == "Patient"
-            results = dict()
-            for process_function in process_functions:
-                results.update(process_function(item["resource"]["id"]))
-            processed_patients += 1
-            if any(key.endswith("matched") for key in results.keys()):
-                matched_patients += 1
+        entries.extend(bundle.get("entry", []))
+
+    for item in entries:
+        assert item["resource"]["resourceType"] == "Patient"
+        results = dict()
+        for process_function in process_functions:
+            results.update(process_function(item["resource"]["id"]))
+        processed_patients += 1
+        if any(key.endswith("matched") for key in results.keys()):
+            matched_patients += 1
 
     duration = timeit.default_timer() - start
     click.echo(
@@ -126,6 +131,7 @@ def process_patients(process_functions, site):
             "patient_identifier_system": patient_identifier_system,
             "processed_patients": processed_patients,
             "matched_patients": matched_patients,
+            "entry count:": len(entries),
         }
     )
 
