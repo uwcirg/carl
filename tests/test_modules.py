@@ -88,39 +88,47 @@ def diabetes_pos_observation(diabetes_observation):
 @fixture
 def diabetes_intvalue_observation():
     obs = {
-      "resourceType": "Observation",
-      "id": "123466",
-      "meta": {
-        "versionId": "1",
-        "lastUpdated": "2023-06-08T19:05:12.667+00:00",
-        "source": "#opIuJ7UPXEAMWTSK",
-        "profile": ["http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",]
-      },
-      "identifier": [{
-        "system": "https://cnics.cirg.washington.edu/lab/site-record-id/cwru",
-        "value": "45_341418346"
-      }],
-      "status": "final",
-      "category": [{
-        "coding": [{
-          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-          "code": "laboratory",
-          "display": "laboratory"
-        }]
-      }],
-      "code": {
-        "coding": [{
-          "system": "https://cnics.cirg.washington.edu/test-name",
-          "code": "Hemoglobin A1C",
-          "display": "Hemoglobin A1C"
-        }],
-        "text": "Hemoglobin A1C"
-      },
-      "subject": {
-        "reference": "Patient/123463"
-      },
-      "effectiveDateTime": "2021-09-13",
-      "valueInteger": 7
+        "resourceType": "Observation",
+        "id": "123466",
+        "meta": {
+            "versionId": "1",
+            "lastUpdated": "2023-06-08T19:05:12.667+00:00",
+            "source": "#opIuJ7UPXEAMWTSK",
+            "profile": [
+                "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+            ],
+        },
+        "identifier": [
+            {
+                "system": "https://cnics.cirg.washington.edu/lab/site-record-id/cwru",
+                "value": "45_341418346",
+            }
+        ],
+        "status": "final",
+        "category": [
+            {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                        "code": "laboratory",
+                        "display": "laboratory",
+                    }
+                ]
+            }
+        ],
+        "code": {
+            "coding": [
+                {
+                    "system": "https://cnics.cirg.washington.edu/test-name",
+                    "code": "Hemoglobin A1C",
+                    "display": "Hemoglobin A1C",
+                }
+            ],
+            "text": "Hemoglobin A1C",
+        },
+        "subject": {"reference": "Patient/123463"},
+        "effectiveDateTime": "2021-09-13",
+        "valueInteger": 7,
     }
     return Observation.from_fhir(obs)
 

@@ -100,7 +100,7 @@ def process_patients(process_functions, site):
     # process each in turn
     processed_patients = 0
     matched_patients = 0
-    search_params = {"_count": 512} # reduce round trips
+    search_params = {"_count": 512}  # reduce round trips
     patient_identifier_system = None
     if site:
         patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
