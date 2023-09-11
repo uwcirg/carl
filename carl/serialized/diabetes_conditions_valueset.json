@@ -1,0 +1,689 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS ValueSet for Diabetes Conditions&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+  },
+  "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-Diabetes-Conditions",
+  "identifier": [
+    {
+      "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+      "value": "CNICS-Diabetes Conditions"
+    }
+  ],
+  "version": "20230803",
+  "name": "CNICS Diabetes Conditions",
+  "status": "draft",
+  "experimental": true,
+  "date": "2023-08-03",
+  "publisher": "CIRG",
+  "contact": [
+    {
+      "name": "CIRG project team",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.cirg.washington.edu/"
+        }
+      ]
+    }
+  ],
+  "description": "ValueSet including all the codings used by CNICS to define Diabetes Conditions",
+  "compose": {
+    "lockedDate": "2023-08-03",
+    "include": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "concept": [
+          {
+            "code": "250.00",
+            "display": "250.00"
+          },
+          {
+            "code": "250.01",
+            "display": "250.01"
+          },
+          {
+            "code": "250.02",
+            "display": "250.02"
+          },
+          {
+            "code": "250.03",
+            "display": "250.03"
+          },
+          {
+            "code": "250.10",
+            "display": "250.10"
+          },
+          {
+            "code": "250.11",
+            "display": "250.11"
+          },
+          {
+            "code": "250.12",
+            "display": "250.12"
+          },
+          {
+            "code": "250.13",
+            "display": "250.13"
+          },
+          {
+            "code": "250.20",
+            "display": "250.20"
+          },
+          {
+            "code": "250.22",
+            "display": "250.22"
+          },
+          {
+            "code": "250.23",
+            "display": "250.23"
+          },
+          {
+            "code": "250.30",
+            "display": "250.30"
+          },
+          {
+            "code": "250.32",
+            "display": "250.32"
+          },
+          {
+            "code": "250.40",
+            "display": "250.40"
+          },
+          {
+            "code": "250.41",
+            "display": "250.41"
+          },
+          {
+            "code": "250.42",
+            "display": "250.42"
+          },
+          {
+            "code": "250.43",
+            "display": "250.43"
+          },
+          {
+            "code": "250.50",
+            "display": "250.50"
+          },
+          {
+            "code": "250.51",
+            "display": "250.51"
+          },
+          {
+            "code": "250.52",
+            "display": "250.52"
+          },
+          {
+            "code": "250.53",
+            "display": "250.53"
+          },
+          {
+            "code": "250.60",
+            "display": "250.60"
+          },
+          {
+            "code": "250.61",
+            "display": "250.61"
+          },
+          {
+            "code": "250.62",
+            "display": "250.62"
+          },
+          {
+            "code": "250.63",
+            "display": "250.63"
+          },
+          {
+            "code": "250.70",
+            "display": "250.70"
+          },
+          {
+            "code": "250.71",
+            "display": "250.71"
+          },
+          {
+            "code": "250.72",
+            "display": "250.72"
+          },
+          {
+            "code": "250.73",
+            "display": "250.73"
+          },
+          {
+            "code": "250.80",
+            "display": "250.80"
+          },
+          {
+            "code": "250.81",
+            "display": "250.81"
+          },
+          {
+            "code": "250.82",
+            "display": "250.82"
+          },
+          {
+            "code": "250.83",
+            "display": "250.83"
+          },
+          {
+            "code": "250.90",
+            "display": "250.90"
+          },
+          {
+            "code": "250.91",
+            "display": "250.91"
+          },
+          {
+            "code": "250.92",
+            "display": "250.92"
+          },
+          {
+            "code": "250.93",
+            "display": "250.93"
+          }
+        ]
+      },
+      {
+        "system": "https://cnics.cirg.washington.edu/diagnosis-name",
+        "concept": [
+          {
+            "code": "Diabetes Gestational",
+            "display": "Diabetes Gestational"
+          },
+          {
+            "code": "Diabetes Mellitus Type 2",
+            "display": "Diabetes Mellitus Type 2"
+          },
+          {
+            "code": "Diabetes Mellitus Type I",
+            "display": "Diabetes Mellitus Type I"
+          },
+          {
+            "code": "Diabetes Mellitus unspecified",
+            "display": "Diabetes Mellitus unspecified"
+          },
+          {
+            "code": "Diabetes Type 2 & Chronic kidney disease",
+            "display": "Diabetes Type 2 & Chronic kidney disease"
+          }
+        ]
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "concept": [
+          {
+            "code": "E10.10",
+            "display": "E10.10"
+          },
+          {
+            "code": "E10.11",
+            "display": "E10.11"
+          },
+          {
+            "code": "E10.21",
+            "display": "E10.21"
+          },
+          {
+            "code": "E10.22",
+            "display": "E10.22"
+          },
+          {
+            "code": "E10.29",
+            "display": "E10.29"
+          },
+          {
+            "code": "E10.319",
+            "display": "E10.319"
+          },
+          {
+            "code": "E10.321",
+            "display": "E10.321"
+          },
+          {
+            "code": "E10.3291",
+            "display": "E10.3291"
+          },
+          {
+            "code": "E10.3292",
+            "display": "E10.3292"
+          },
+          {
+            "code": "E10.3293",
+            "display": "E10.3293"
+          },
+          {
+            "code": "E10.3299",
+            "display": "E10.3299"
+          },
+          {
+            "code": "E10.3313",
+            "display": "E10.3313"
+          },
+          {
+            "code": "E10.3391",
+            "display": "E10.3391"
+          },
+          {
+            "code": "E10.3393",
+            "display": "E10.3393"
+          },
+          {
+            "code": "E10.3399",
+            "display": "E10.3399"
+          },
+          {
+            "code": "E10.3491",
+            "display": "E10.3491"
+          },
+          {
+            "code": "E10.3519",
+            "display": "E10.3519"
+          },
+          {
+            "code": "E10.3531",
+            "display": "E10.3531"
+          },
+          {
+            "code": "E10.359",
+            "display": "E10.359"
+          },
+          {
+            "code": "E10.3591",
+            "display": "E10.3591"
+          },
+          {
+            "code": "E10.3592",
+            "display": "E10.3592"
+          },
+          {
+            "code": "E10.3593",
+            "display": "E10.3593"
+          },
+          {
+            "code": "E10.3599",
+            "display": "E10.3599"
+          },
+          {
+            "code": "E10.36",
+            "display": "E10.36"
+          },
+          {
+            "code": "E10.39",
+            "display": "E10.39"
+          },
+          {
+            "code": "E10.40",
+            "display": "E10.40"
+          },
+          {
+            "code": "E10.41",
+            "display": "E10.41"
+          },
+          {
+            "code": "E10.42",
+            "display": "E10.42"
+          },
+          {
+            "code": "E10.43",
+            "display": "E10.43"
+          },
+          {
+            "code": "E10.49",
+            "display": "E10.49"
+          },
+          {
+            "code": "E10.51",
+            "display": "E10.51"
+          },
+          {
+            "code": "E10.59",
+            "display": "E10.59"
+          },
+          {
+            "code": "E10.621",
+            "display": "E10.621"
+          },
+          {
+            "code": "E10.622",
+            "display": "E10.622"
+          },
+          {
+            "code": "E10.641",
+            "display": "E10.641"
+          },
+          {
+            "code": "E10.649",
+            "display": "E10.649"
+          },
+          {
+            "code": "E10.65",
+            "display": "E10.65"
+          },
+          {
+            "code": "E10.69",
+            "display": "E10.69"
+          },
+          {
+            "code": "E10.8",
+            "display": "E10.8"
+          },
+          {
+            "code": "E10.9",
+            "display": "E10.9"
+          },
+          {
+            "code": "E11.00",
+            "display": "E11.00"
+          },
+          {
+            "code": "E11.01",
+            "display": "E11.01"
+          },
+          {
+            "code": "E11.10",
+            "display": "E11.10"
+          },
+          {
+            "code": "E11.11",
+            "display": "E11.11"
+          },
+          {
+            "code": "E11.21",
+            "display": "E11.21"
+          },
+          {
+            "code": "E11.22",
+            "display": "E11.22"
+          },
+          {
+            "code": "E11.29",
+            "display": "E11.29"
+          },
+          {
+            "code": "E11.311",
+            "display": "E11.311"
+          },
+          {
+            "code": "E11.319",
+            "display": "E11.319"
+          },
+          {
+            "code": "E11.321",
+            "display": "E11.321"
+          },
+          {
+            "code": "E11.3211",
+            "display": "E11.3211"
+          },
+          {
+            "code": "E11.3213",
+            "display": "E11.3213"
+          },
+          {
+            "code": "E11.3219",
+            "display": "E11.3219"
+          },
+          {
+            "code": "E11.329",
+            "display": "E11.329"
+          },
+          {
+            "code": "E11.3291",
+            "display": "E11.3291"
+          },
+          {
+            "code": "E11.3292",
+            "display": "E11.3292"
+          },
+          {
+            "code": "E11.3293",
+            "display": "E11.3293"
+          },
+          {
+            "code": "E11.3299",
+            "display": "E11.3299"
+          },
+          {
+            "code": "E11.331",
+            "display": "E11.331"
+          },
+          {
+            "code": "E11.3311",
+            "display": "E11.3311"
+          },
+          {
+            "code": "E11.3312",
+            "display": "E11.3312"
+          },
+          {
+            "code": "E11.3313",
+            "display": "E11.3313"
+          },
+          {
+            "code": "E11.3319",
+            "display": "E11.3319"
+          },
+          {
+            "code": "E11.339",
+            "display": "E11.339"
+          },
+          {
+            "code": "E11.3391",
+            "display": "E11.3391"
+          },
+          {
+            "code": "E11.3392",
+            "display": "E11.3392"
+          },
+          {
+            "code": "E11.3393",
+            "display": "E11.3393"
+          },
+          {
+            "code": "E11.3399",
+            "display": "E11.3399"
+          },
+          {
+            "code": "E11.3411",
+            "display": "E11.3411"
+          },
+          {
+            "code": "E11.3413",
+            "display": "E11.3413"
+          },
+          {
+            "code": "E11.3419",
+            "display": "E11.3419"
+          },
+          {
+            "code": "E11.349",
+            "display": "E11.349"
+          },
+          {
+            "code": "E11.3491",
+            "display": "E11.3491"
+          },
+          {
+            "code": "E11.3493",
+            "display": "E11.3493"
+          },
+          {
+            "code": "E11.351",
+            "display": "E11.351"
+          },
+          {
+            "code": "E11.3511",
+            "display": "E11.3511"
+          },
+          {
+            "code": "E11.3512",
+            "display": "E11.3512"
+          },
+          {
+            "code": "E11.3513",
+            "display": "E11.3513"
+          },
+          {
+            "code": "E11.3519",
+            "display": "E11.3519"
+          },
+          {
+            "code": "E11.3522",
+            "display": "E11.3522"
+          },
+          {
+            "code": "E11.3531",
+            "display": "E11.3531"
+          },
+          {
+            "code": "E11.3533",
+            "display": "E11.3533"
+          },
+          {
+            "code": "E11.3551",
+            "display": "E11.3551"
+          },
+          {
+            "code": "E11.3553",
+            "display": "E11.3553"
+          },
+          {
+            "code": "E11.3559",
+            "display": "E11.3559"
+          },
+          {
+            "code": "E11.359",
+            "display": "E11.359"
+          },
+          {
+            "code": "E11.3591",
+            "display": "E11.3591"
+          },
+          {
+            "code": "E11.3592",
+            "display": "E11.3592"
+          },
+          {
+            "code": "E11.3593",
+            "display": "E11.3593"
+          },
+          {
+            "code": "E11.3599",
+            "display": "E11.3599"
+          },
+          {
+            "code": "E11.36",
+            "display": "E11.36"
+          },
+          {
+            "code": "E11.37X3",
+            "display": "E11.37X3"
+          },
+          {
+            "code": "E11.39",
+            "display": "E11.39"
+          },
+          {
+            "code": "E11.40",
+            "display": "E11.40"
+          },
+          {
+            "code": "E11.41",
+            "display": "E11.41"
+          },
+          {
+            "code": "E11.42",
+            "display": "E11.42"
+          },
+          {
+            "code": "E11.43",
+            "display": "E11.43"
+          },
+          {
+            "code": "E11.44",
+            "display": "E11.44"
+          },
+          {
+            "code": "E11.49",
+            "display": "E11.49"
+          },
+          {
+            "code": "E11.51",
+            "display": "E11.51"
+          },
+          {
+            "code": "E11.52",
+            "display": "E11.52"
+          },
+          {
+            "code": "E11.59",
+            "display": "E11.59"
+          },
+          {
+            "code": "E11.610",
+            "display": "E11.610"
+          },
+          {
+            "code": "E11.618",
+            "display": "E11.618"
+          },
+          {
+            "code": "E11.620",
+            "display": "E11.620"
+          },
+          {
+            "code": "E11.621",
+            "display": "E11.621"
+          },
+          {
+            "code": "E11.622",
+            "display": "E11.622"
+          },
+          {
+            "code": "E11.628",
+            "display": "E11.628"
+          },
+          {
+            "code": "E11.630",
+            "display": "E11.630"
+          },
+          {
+            "code": "E11.638",
+            "display": "E11.638"
+          },
+          {
+            "code": "E11.641",
+            "display": "E11.641"
+          },
+          {
+            "code": "E11.649",
+            "display": "E11.649"
+          },
+          {
+            "code": "E11.65",
+            "display": "E11.65"
+          },
+          {
+            "code": "E11.69",
+            "display": "E11.69"
+          },
+          {
+            "code": "E11.8",
+            "display": "E11.8"
+          },
+          {
+            "code": "E11.9",
+            "display": "E11.9"
+          }
+        ]
+      }
+    ]
+  }
+}

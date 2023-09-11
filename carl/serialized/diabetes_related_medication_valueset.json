@@ -1,0 +1,91 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Medication Codes for diabetes&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+  },
+  "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-diabetes-related-medication-codings",
+  "identifier": [
+    {
+      "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+      "value": "CNICS-diabetes-related-medication-codings"
+    }
+  ],
+  "version": "20230615",
+  "name": "CNICS Diabetes Related Medication Codings",
+  "status": "draft",
+  "experimental": true,
+  "date": "2023-06-15",
+  "publisher": "CIRG",
+  "contact": [
+    {
+      "name": "CIRG project team",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.cirg.washington.edu/"
+        }
+      ]
+    }
+  ],
+  "description": "ValueSet including all the medication codings used by CNICS requested for diabetes related",
+  "compose": {
+    "lockedDate": "2023-06-15",
+    "include": [
+      {
+        "system": "https://cnics.cirg.washington.edu/medication-name",
+        "concept": [
+          {
+            "code": "ACARBOSE",
+            "display": "ACARBOSE"
+          },
+          {
+            "code": "EXENATIDE",
+            "display": "EXENATIDE"
+          },
+          {
+            "code": "LIRAGLUTIDE",
+            "display": "LIRAGLUTIDE"
+          },
+          {
+            "code": "METFORMIN",
+            "display": "METFORMIN"
+          },
+          {
+            "code": "METFORMIN + PIOGLITAZONE",
+            "display": "METFORMIN + PIOGLITAZONE"
+          },
+          {
+            "code": "METFORMIN + ROSIGLITAZONE",
+            "display": "METFORMIN + ROSIGLITAZONE"
+          },
+          {
+            "code": "MIGLITOL",
+            "display": "MIGLITOL"
+          },
+          {
+            "code": "PIOGLITAZONE",
+            "display": "PIOGLITAZONE"
+          },
+          {
+            "code": "ROSIGLITAZONE",
+            "display": "ROSIGLITAZONE"
+          },
+          {
+            "code": "SEMAGLUTIDE",
+            "display": "SEMAGLUTIDE"
+          },
+          {
+            "code": "TROGLITAZONE",
+            "display": "TROGLITAZONE"
+          }
+        ]
+      }
+    ]
+  }
+}

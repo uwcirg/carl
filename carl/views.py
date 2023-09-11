@@ -1,14 +1,15 @@
 import click
+from collections import defaultdict
+from datetime import datetime
 from flask import Blueprint, abort, current_app, jsonify
 from flask.json import JSONEncoder
+import json
+from operator import itemgetter
 import timeit
 
-from carl.logic.copd import (
-    CNICS_IDENTIFIER_SYSTEM,
-    process_4_COPD_conditions,
-    process_4_COPD_medications,
-    remove_COPD_classification,
-)
+from carl.logic.copd import classify_for_COPD, remove_COPD_classification
+from carl.logic.diabetes import classify_for_diabetes, remove_diabetes_classification
+from carl.modules.patient import CNICS_IDENTIFIER_SYSTEM
 from carl.modules.paging import next_resource_bundle
 
 base_blueprint = Blueprint("base", __name__, cli_group=None)
@@ -60,68 +61,68 @@ def config_settings(config_key):
     return jsonify(settings)
 
 
-@base_blueprint.route("/classify/<int:patient_id>/<string:site_code>", methods=["PUT"])
-def classify(patient_id, site_code):
+@base_blueprint.route("/classify/<int:patient_id>", methods=["PUT"])
+def classify(patient_id):
     """Classify single patient as configured"""
-    results = dict()
-    results["Condition"] = process_4_COPD_conditions(patient_id, site_code)
-    # We only consider COPD meds if the patient obtained the COPD condition
-    if results["Condition"]["matched"]:
-        results["MedicationRequest"] = process_4_COPD_medications(patient_id, site_code)
+    results = classify_for_COPD(patient_id)
+    results.update(classify_for_diabetes(patient_id))
     return results
 
 
 @base_blueprint.cli.command("classify")
-@click.argument("site")
+@click.argument("site", nargs=-1)
 def classify_all(site):
     """Classify all patients found"""
     return process_patients(
-        process_functions=(process_4_COPD_conditions, process_4_COPD_medications),
+        process_functions=(classify_for_COPD, classify_for_diabetes),
         site=site,
-        require_all=True,
     )
 
 
 @base_blueprint.cli.command("declassify")
-@click.argument("site")
+@click.argument("site", nargs=-1)
 def declassify_all(site):
-    """Clear the (potentially) persisted COPD condition generated during classify"""
-    return process_patients((remove_COPD_classification,), site)
+    """Clear the (potentially) persisted conditions generated during classify"""
+    return process_patients(
+        (remove_COPD_classification, remove_diabetes_classification), site
+    )
 
 
-def process_patients(process_functions, site, require_all=False):
+def process_patients(process_functions, site):
     """
-    Process all patients with given list of functions.
+    Process all patients for given site, with given list of functions.
 
     :param process_functions: ordered list of functions to call on each respective patient
-    :param site: name of site being processed, i.e. "uw"
-    :param require_all: set True to treat ordered list of process functions with a logical
-      AND, i.e. bail on each patient with first function in list to fail
+    :param site: name of site being processed, i.e. "uw", or None for all sites
     """
     start = timeit.default_timer()
-    results = dict()
-    # Obtain batches of Patients with site identifier, process each in turn
+    # Obtain batches of Patients (with site identifier if requested),
+    # process each in turn
     processed_patients = 0
     matched_patients = 0
-    patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
-    # To query on system portion only of an identifier, must include
-    # trailing '|' used customarily to delimit `system|value`
-    search_params = {"identifier": patient_identifier_system + "|"}
+    search_params = {"_count": 512}  # reduce round trips
+    patient_identifier_system = None
+    if site:
+        patient_identifier_system = CNICS_IDENTIFIER_SYSTEM + site
+        # To query on system portion only of an identifier, must include
+        # trailing '|' used customarily to delimit `system|value`
+        search_params = {"identifier": patient_identifier_system + "|"}
+
+    # cache entries and then process.  necessary as the HAPI paging system
+    # can time out before classification completes.
+    entries = []
     for bundle in next_resource_bundle("Patient", search_params=search_params):
         assert bundle["resourceType"] == "Bundle"
-        for item in bundle.get("entry", []):
-            matched = False
-            assert item["resource"]["resourceType"] == "Patient"
-            for process_function in process_functions:
-                results = process_function(
-                    patient_id=item["resource"]["id"], site_code=site
-                )
-                matched = matched or results.get("matched", False)
-                if require_all and not matched:
-                    break
-            processed_patients += 1
-            if matched:
-                matched_patients += 1
+        entries.extend(bundle.get("entry", []))
+
+    for item in entries:
+        assert item["resource"]["resourceType"] == "Patient"
+        results = dict()
+        for process_function in process_functions:
+            results.update(process_function(item["resource"]["id"]))
+        processed_patients += 1
+        if any(key.endswith("matched") for key in results.keys()):
+            matched_patients += 1
 
     duration = timeit.default_timer() - start
     click.echo(
@@ -130,5 +131,84 @@ def process_patients(process_functions, site, require_all=False):
             "patient_identifier_system": patient_identifier_system,
             "processed_patients": processed_patients,
             "matched_patients": matched_patients,
+            "entry count:": len(entries),
         }
     )
+
+
+@base_blueprint.cli.command("valueset")
+@click.argument("resource_type")
+@click.argument("description")
+def generate_valueset(resource_type, description):
+    """Generate valueset of all given resources of requested type found"""
+    seen = set()
+    results = defaultdict(list)
+    for bundle in next_resource_bundle(resource_type, search_params={"_count": 500}):
+        for item in bundle.get("entry", []):
+            assert item["resource"]["resourceType"] == resource_type
+            assert len(item["resource"]["code"]["coding"]) == 1
+            system = item["resource"]["code"]["coding"][0]["system"]
+            code = item["resource"]["code"]["coding"][0]["code"]
+
+            # Organize as needed for ValueSets, i.e. by system
+
+            # prune out duplicates - i.e. when same resource is assigned
+            # to hundreds of patients
+            key = "|".join((system, code))
+            if key in seen:
+                continue
+            seen.add(key)
+            display = item["resource"]["code"]["coding"][0]["display"]
+            results[system].append({"code": code, "display": display})
+
+    # repackage results for valueset
+    include = []
+    for system in results.keys():
+        include.append(
+            {
+                "system": system,
+                "concept": [v for v in sorted(results[system], key=itemgetter("code"))],
+            }
+        )
+
+    valueset = {
+        "resourceType": "ValueSet",
+        "meta": {
+            "profile": ["http://hl7.org/fhir/StructureDefinition/shareablevalueset"]
+        },
+        "text": {
+            "status": "generated",
+            "div": '<div xmlns="http://www.w3.org/1999/xhtml">\n\t\t\t'
+            f"<p>Value set &quot;CNICS ValueSet for {description}&quot;</p>\n\t\t\t"
+            "<p>Developed by: CIRG</p>\n\t\t</div>",
+        },
+        "url": "http://cnics-cirg.washington.edu/"
+        f"fhir/ValueSet/CNICS-{description.replace(' ', '-')}",
+        "identifier": [
+            {
+                "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+                "value": f"CNICS-{description}",
+            }
+        ],
+        "version": datetime.now().strftime("%Y%m%d"),
+        "name": f"CNICS {description}",
+        "status": "draft",
+        "experimental": True,
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "publisher": "CIRG",
+        "contact": [
+            {
+                "name": "CIRG project team",
+                "telecom": [
+                    {"system": "url", "value": "https://www.cirg.washington.edu/"}
+                ],
+            }
+        ],
+        "description": f"ValueSet including all the codings used by CNICS to define {description}",
+        "compose": {
+            "lockedDate": datetime.now().strftime("%Y-%m-%d"),
+            "include": include,
+        },
+    }
+
+    print(json.dumps(valueset, indent=2))

@@ -1,3 +1,6 @@
+from carl.modules.coding import Coding
+
+
 class CodeableConcept(object):
     """FHIR shim"""
 
@@ -12,6 +15,15 @@ class CodeableConcept(object):
 
     def as_fhir(self):
         return {"coding": [c.as_fhir() for c in self.codes]}
+
+    @classmethod
+    def from_fhir(cls, data):
+        """Deserialize from json (FHIR) data"""
+        instance = cls()
+        for code in data.get("coding"):
+            c = Coding.from_fhir(code)
+            instance.codes.append(c)
+        return instance
 
     def value_param(self):
         """Akin to `search_url`, but to only return the value portion
