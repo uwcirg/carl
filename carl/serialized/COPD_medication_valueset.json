@@ -1,0 +1,123 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p>Value set &quot;CNICS Medication Codes for COPD&quot;</p>\n\t\t\t<p>Developed by: CIRG</p>\n\t\t</div>"
+  },
+  "url": "http://cnics-cirg.washington.edu/fhir/ValueSet/CNICS-COPD-medication-codings",
+  "identifier": [
+    {
+      "system": "http://cnics-cirg.washington.edu/fhir/identifier/valueset",
+      "value": "CNICS-COPD-medication-codings"
+    }
+  ],
+  "version": "20220202",
+  "name": "CNICS COPD Medication Codings",
+  "status": "draft",
+  "experimental": true,
+  "date": "2022-02-02",
+  "publisher": "CIRG",
+  "contact": [
+    {
+      "name": "CIRG project team",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.cirg.washington.edu/"
+        }
+      ]
+    }
+  ],
+  "description": "ValueSet including all the medication codings used by CNICS requested for COPD or COPD, exacerbation",
+  "compose": {
+    "lockedDate": "2022-04-06",
+    "include": [
+      {
+        "system": "https://cnics.cirg.washington.edu/medication-name",
+        "concept": [
+          {
+            "code": "IPRATROPIUM-INHALED",
+            "display": "IPRATROPIUM-INHALED"
+          },
+          {
+            "code": "ARFORMOTEROL",
+            "display": "ARFORMOTEROL"
+          },
+          {
+            "code": "FORMOTEROL",
+            "display": "FORMOTEROL"
+          },
+          {
+            "code": "OLODATEROL",
+            "display": "OLODATEROL"
+          },
+          {
+            "code": "SALMETEROL",
+            "display": "SALMETEROL"
+          },
+          {
+            "code": "ACLIDINIUM",
+            "display": "ACLIDINIUM"
+          },
+          {
+            "code": "TIOTROPIUM",
+            "display": "TIOTROPIUM"
+          },
+          {
+            "code": "UMECLIDINIUM",
+            "display": "UMECLIDINIUM"
+          },
+          {
+            "code": "FLUTICASONE FUROATE + UMECLIDINIUM + VILANTEROL",
+            "display": "FLUTICASONE FUROATE + UMECLIDINIUM + VILANTEROL"
+          },
+          {
+            "code": "ALBUTEROL + IPRATROPIUM",
+            "display": "ALBUTEROL + IPRATROPIUM"
+          },
+          {
+            "code": "IPRATROPIUM +  FENOTEROL",
+            "display": "IPRATROPIUM +  FENOTEROL"
+          },
+          {
+            "code": "ACLIDINIUM + FORMOTEROL",
+            "display": "ACLIDINIUM + FORMOTEROL"
+          },
+          {
+            "code": "BUDESONIDE + FORMOTEROL",
+            "display": "BUDESONIDE + FORMOTEROL"
+          },
+          {
+            "code": "FLUTICASONE + SALMETEROL",
+            "display": "FLUTICASONE + SALMETEROL"
+          },
+          {
+            "code": "FLUTICASONE + VILANTEROL",
+            "display": "FLUTICASONE + VILANTEROL"
+          },
+          {
+            "code": "MOMETASONE + FORMOTEROL",
+            "display": "MOMETASONE + FORMOTEROL"
+          },
+          {
+            "code": "OLODATEROL + TIOTROPIUM",
+            "display": "OLODATEROL + TIOTROPIUM"
+          },
+          {
+            "code": "UMECLIDINIUM +  VILANTEROL",
+            "display": "UMECLIDINIUM +  VILANTEROL"
+          },
+          {
+            "code": "GLYCOPYRROLATE + FORMOTEROL FUMARATE",
+            "display": "GLYCOPYRROLATE + FORMOTEROL FUMARATE"
+          }
+        ]
+      }
+    ]
+  }
+}
