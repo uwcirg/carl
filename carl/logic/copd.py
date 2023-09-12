@@ -142,33 +142,3 @@ def remove_COPD_classification(patient_id):
 
     current_app.logger.debug(results)
     return results
-
-
-def remove_COPD_classification(patient_id, site_code):
-    """declassify given patient, i.e. remove added COPD Condition
-
-    Function used to reset or declassify patients previously found to have COPD,
-    this will remove the special Condition added during the classification step,
-    if found from the given patient.
-
-    NB: generates side-effects, namely a special Condition is removed from the
-    configured FHIR store for patients found to have previously gained said Condition
-    """
-    current_app.logger.debug(f"declassify {patient_id} of COPD")
-    classified_COPD_coding = set([CNICS_COPD_coding])
-    previously_classified = patient_has(
-        patient_id=patient_id, condition_codings=classified_COPD_coding)
-    results = {
-        "patient_id": patient_canonical_identifier(patient_id, site_code) or patient_id,
-        "COPD classification found": len(previously_classified) > 0}
-    if not previously_classified:
-        return results
-
-    condition = Condition()
-    condition.code = CodeableConcept(CNICS_COPD_coding)
-    condition.subject = Patient(patient_id)
-    delete_resource(resource=condition)
-    results['matched'] = True
-
-    current_app.logger.debug(results)
-    return results
