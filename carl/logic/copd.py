@@ -68,7 +68,7 @@ def process_4_COPD_medications(patient_id):
     """
     current_app.logger.debug(f"process {patient_id} for COPD Medications")
 
-    # process for mediation requests in value set
+    # process for all medication requests in value set
     medication_codings = valueset_codings(COPD_MEDICATION_VALUESET_URI)
     positive_codings = patient_has(
         patient_id=patient_id,
