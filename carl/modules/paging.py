@@ -1,9 +1,9 @@
 """Module to assist in paging through HAPI search bundles"""
 from flask import current_app, has_app_context
 import jmespath
-import requests
 
 from carl.config import FHIR_SERVER_URL
+from carl.modules.authsession import AuthSession
 from carl.modules.resource import Resource
 
 
@@ -29,7 +29,8 @@ def next_resource_bundle(resource_type, search_params=None):
         else resource_type
     )
     url = f"{FHIR_SERVER_URL}{resource_string}"
-    response = requests.get(url=url, params=search_params, timeout=30)
+    session = AuthSession()
+    response = session.get(url=url, params=search_params, timeout=30)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
@@ -47,7 +48,8 @@ def next_resource_bundle(resource_type, search_params=None):
         if not next_page_link:
             return
 
-        response = requests.get(next_page_link, timeout=30)
+        session = AuthSession()
+        response = session.get(next_page_link, timeout=30)
         current_app.logger.debug(f"HAPI GET: {response.url}")
         response.raise_for_status()
         bundle = response.json()

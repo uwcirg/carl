@@ -26,7 +26,6 @@ class AuthSession:
 
     def __init__(self):
         self.session = requests.Session()
-        self._update_token()
 
     def _update_token(self):
         now = time.time()

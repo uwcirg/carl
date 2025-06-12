@@ -1,9 +1,9 @@
 from collections import OrderedDict
 import logging
-import requests
 from urllib.parse import urlencode
 
 from carl.config import FHIR_SERVER_URL
+from carl.modules.authsession import AuthSession
 
 
 class Resource(object):
@@ -26,10 +26,10 @@ class Resource(object):
 
         # Round-trip to see if this represents a new or existing resource
         if FHIR_SERVER_URL:
-            headers = {"Cache-Control": "no-cache"}
-            response = requests.get(
+            session = AuthSession()
+            session.headers.update({"Cache-Control": "no-cache"})
+            response = session.get(
                 "/".join((FHIR_SERVER_URL, self.search_url())),
-                headers=headers,
                 timeout=30,
             )
             response.raise_for_status()
@@ -96,7 +96,8 @@ def delete_resource(resource):
     writes.  AKA conditional delete: https://www.hl7.org/fhir/http.html#cond-delete
     """
     url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.delete(url=url, json=resource.as_fhir(), timeout=30)
+    session = AuthSession()
+    response = session.delete(url=url, json=resource.as_fhir(), timeout=30)
     logging.debug(f"HAPI DELETE: {response.url}")
     response.raise_for_status()
     return response.json()
@@ -110,7 +111,8 @@ def persist_resource(resource):
     writes.  AKA conditional update: https://www.hl7.org/fhir/http.html#cond-update
     """
     url = f"{FHIR_SERVER_URL}{resource.search_url()}"
-    response = requests.put(url=url, json=resource.as_fhir(), timeout=30)
+    session = AuthSession()
+    response = session.put(url=url, json=resource.as_fhir(), timeout=30)
     logging.debug(f"HAPI PUT: {response.url}")
     response.raise_for_status()
     return response.json()

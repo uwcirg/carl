@@ -174,7 +174,7 @@ def test_deserialize_valueset(valueset_data):
 def test_valueset_codings(mocker, valueset_bundle):
     # fake HAPI round trip call w/i valueset_codings()
     mocker.patch(
-        "carl.modules.valueset.requests.get",
+        "carl.modules.valueset.AuthSession.get",
         return_value=MockResponse(data=valueset_bundle),
     )
 
@@ -221,7 +221,7 @@ def test_condition_as_fhir(copd_condition):
 def test_paging(mocker, patient_search_bundle):
     # mock first of many page results:
     mocker.patch(
-        "carl.modules.paging.requests.get",
+        "carl.modules.paging.AuthSession.get",
         return_value=MockResponse(data=patient_search_bundle),
     )
 
@@ -237,7 +237,7 @@ def test_paging(mocker, patient_search_bundle):
 def test_canonical_identifier(mocker, patient_data):
     # mock HAPI result from patient lookup
     mocker.patch(
-        "carl.modules.patient.requests.get",
+        "carl.modules.patient.AuthSession.get",
         return_value=MockResponse(data=patient_data),
     )
 

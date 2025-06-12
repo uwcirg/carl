@@ -1,7 +1,6 @@
 """FHIR ValueSet module"""
-import requests
-
 from carl.config import FHIR_SERVER_URL
+from carl.modules.authsession import AuthSession
 from carl.modules.coding import Coding
 from carl.modules.resource import Resource
 
@@ -31,7 +30,8 @@ def valueset_codings(url):
     """Obtain set of codings in matching ValueSet by url field"""
     search_params = {"url": url}
     resource_path = f"{FHIR_SERVER_URL}ValueSet"
-    response = requests.get(resource_path, params=search_params, timeout=30)
+    session = AuthSession()
+    response = session.get(resource_path, params=search_params, timeout=30)
     response.raise_for_status()
     bundle = response.json()
     if bundle["total"] != 1:
