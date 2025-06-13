@@ -1,19 +1,23 @@
 import requests
 import time
 
-from carl.config import FHIR_CLIENT_SECRET, FHIR_SERVER_URL
+from carl.config import (
+    FHIR_CLIENT_ID,
+    FHIR_CLIENT_SECRET,
+    FHIR_SERVER_AUTH_URL,
+    FHIR_SERVER_URL,
+)
 
 
 def _fetch_token():
-    auth_path = "/".join((FHIR_SERVER_URL, "auth/token"))
     headers = {"Content-Type": "application/json"}
     body = {
         "grant_type": "client_credentials",
-        "client_id": FHIR_CLIENT_SECRET,
+        "client_id": FHIR_CLIENT_ID,
         "client_secret": FHIR_CLIENT_SECRET,
     }
     # verify=False supress SSL warnings like curl --insecure  (NOT ADVISED)
-    response = requests.get(auth_path, verify=False, headers=headers, data=body)
+    response = requests.get(FHIR_SERVER_AUTH_URL, verify=False, headers=headers, data=body)
     response.raise_for_status()
     data = response.json()
     assert data["token_type"] == "Bearer"
