@@ -12,6 +12,7 @@ def next_page_link_from_bundle(bundle):
     if not (next_page_link and len(next_page_link)):
         return
 
+    current_app.logger.debug("Next page link: %s", next_page_link)
     # jmespath returns a list of matches, with the requested value at element zero
     return next_page_link[0][0]
 
