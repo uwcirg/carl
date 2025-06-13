@@ -1,3 +1,4 @@
+from flask import current_app
 import requests
 import time
 
@@ -33,7 +34,9 @@ class AuthSession:
     def _update_token(self):
         now = time.time()
         if not AuthSession._token or now >= AuthSession._token_expiration:
+            current_app.logger.debug("Fetch auth token")
             token, lifespan = _fetch_token()
+            current_app.logger.debug(f"  obtained: {token}")
             AuthSession._token = token
             AuthSession._token_expiration = now + lifespan
         self.session.headers.update({
@@ -42,16 +45,20 @@ class AuthSession:
 
     def delete(self, url, **kwargs):
         self._update_token()
+        current_app.logger.debug(f"make authorized DELETE request to {url}")
         return self.session.delete(url, **kwargs)
 
     def get(self, url, **kwargs):
         self._update_token()
+        current_app.logger.debug(f"make authorized GET request to {url}")
         return self.session.get(url, **kwargs)
 
     def post(self, url, **kwargs):
         self._update_token()
+        current_app.logger.debug(f"make authorized POST request to {url}")
         return self.session.post(url, **kwargs)
 
     def put(self, url, **kwargs):
         self._update_token()
+        current_app.logger.debug(f"make authorized PUT request to {url}")
         return self.session.put(url, **kwargs)
