@@ -5,7 +5,6 @@ from carl.config import (
     FHIR_CLIENT_ID,
     FHIR_CLIENT_SECRET,
     FHIR_SERVER_AUTH_URL,
-    FHIR_SERVER_URL,
 )
 
 
