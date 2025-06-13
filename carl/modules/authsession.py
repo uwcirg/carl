@@ -22,7 +22,9 @@ def _fetch_token():
     response = requests.get(FHIR_SERVER_AUTH_URL, verify=False, headers=headers, data=body)
     current_app.logger.debug(f"response code: {response.status_code}")
     # response.raise_for_status()  insecure raises a 988
+    current_app.logger.debug(f"text: {response.text}") 
     data = response.json()
+    current_app.logger.debug(f"json: {data}") 
     assert data["token_type"] == "Bearer"
     return data["access_token"], data["expires_in"]
 
