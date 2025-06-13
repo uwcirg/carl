@@ -17,7 +17,10 @@ def _fetch_token():
         "client_secret": FHIR_CLIENT_SECRET,
     }
     # verify=False supress SSL warnings like curl --insecure  (NOT ADVISED)
+    current_app.logger.debug(f"token request to {FHIR_SERVER_AUTH_URL}")
+    current_app.logger.debug(f"with headers: {headers} and data: {body}")
     response = requests.get(FHIR_SERVER_AUTH_URL, verify=False, headers=headers, data=body)
+    current_app.logger.debug(f"response code: {response.status_code}")
     response.raise_for_status()
     data = response.json()
     assert data["token_type"] == "Bearer"
