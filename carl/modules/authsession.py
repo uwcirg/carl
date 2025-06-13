@@ -24,6 +24,12 @@ def _fetch_token():
     return data["access_token"], data["expires_in"]
 
 
+def dont_verify(**kwargs):
+    updated_kwargs = dict(kwargs)
+    updated_kwargs["verify"] = False
+    return updated_kwargs
+
+
 class AuthSession:
     _token = None
     _token_expiration = 0
@@ -46,19 +52,23 @@ class AuthSession:
     def delete(self, url, **kwargs):
         self._update_token()
         current_app.logger.debug(f"make authorized DELETE request to {url}")
-        return self.session.delete(url, **kwargs)
+        updated_kwargs = dont_verify(**kwargs)
+        return self.session.delete(url, **updated_kwargs)
 
     def get(self, url, **kwargs):
         self._update_token()
         current_app.logger.debug(f"make authorized GET request to {url}")
-        return self.session.get(url, **kwargs)
+        updated_kwargs = dont_verify(**kwargs)
+        return self.session.get(url, **updated_kwargs)
 
     def post(self, url, **kwargs):
         self._update_token()
         current_app.logger.debug(f"make authorized POST request to {url}")
-        return self.session.post(url, **kwargs)
+        updated_kwargs = dont_verify(**kwargs)
+        return self.session.post(url, **updated_kwargs)
 
     def put(self, url, **kwargs):
         self._update_token()
         current_app.logger.debug(f"make authorized PUT request to {url}")
-        return self.session.put(url, **kwargs)
+        updated_kwargs = dont_verify(**kwargs)
+        return self.session.put(url, **updated_kwargs)
