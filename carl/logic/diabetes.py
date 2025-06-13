@@ -1,4 +1,5 @@
 """diabetes module"""
+
 from flask import current_app
 
 from carl.modules.coding import Coding

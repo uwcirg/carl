@@ -1,4 +1,5 @@
 """FHIR ValueSet module"""
+
 from flask import has_app_context, current_app
 
 from carl.config import FHIR_SERVER_URL

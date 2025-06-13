@@ -1,4 +1,5 @@
 """FHIR ValueSet module"""
+
 from carl.config import FHIR_SERVER_URL
 from carl.modules.authsession import AuthSession
 from carl.modules.coding import Coding

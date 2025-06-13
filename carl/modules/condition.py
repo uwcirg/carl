@@ -1,4 +1,5 @@
 """FHIR Condition module"""
+
 from flask import current_app
 
 from carl.modules.codeableconcept import CodeableConcept

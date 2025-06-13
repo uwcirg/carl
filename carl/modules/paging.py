@@ -1,4 +1,5 @@
 """Module to assist in paging through HAPI search bundles"""
+
 from urllib.parse import urlparse
 from flask import current_app, has_app_context
 import jmespath
