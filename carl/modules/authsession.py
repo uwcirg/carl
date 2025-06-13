@@ -17,14 +17,9 @@ def _fetch_token():
         "client_secret": FHIR_CLIENT_SECRET,
     }
     # verify=False supress SSL warnings like curl --insecure  (NOT ADVISED)
-    current_app.logger.debug(f"token request to {FHIR_SERVER_AUTH_URL}")
-    current_app.logger.debug(f"with headers: {headers} and data: {body}")
     response = requests.post(FHIR_SERVER_AUTH_URL, verify=False, headers=headers, json=body)
-    current_app.logger.debug(f"response code: {response.status_code}")
-    # response.raise_for_status()  insecure raises a 988
-    current_app.logger.debug(f"text: {response.text}") 
+    response.raise_for_status()
     data = response.json()
-    current_app.logger.debug(f"json: {data}") 
     assert data["token_type"] == "Bearer"
     return data["access_token"], data["expires_in"]
 
