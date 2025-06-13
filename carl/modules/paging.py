@@ -17,7 +17,8 @@ def next_page_link_from_bundle(bundle):
     next_page_link = next_page_link[0][0]
 
     if not next_page_link.startswith(FHIR_SERVER_URL):
-        # relative path includes path potentially included, get just the base
+        # Handle servers returning relative path
+        # FHIR_SERVER_URL often includes partial path and must be stripped
         parsed = urlparse(FHIR_SERVER_URL)
         next_page_link = f"{parsed.scheme}://{parsed.netloc}{next_page_link}"
     return next_page_link
@@ -54,7 +55,6 @@ def next_resource_bundle(resource_type, search_params=None):
         next_page_link = next_page_link_from_bundle(bundle)
         if not next_page_link:
             return
-
 
         session = AuthSession()
         response = session.get(next_page_link, timeout=30)
