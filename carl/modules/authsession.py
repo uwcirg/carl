@@ -18,7 +18,12 @@ def _fetch_token():
         "client_secret": FHIR_CLIENT_SECRET,
     }
     verify = not FHIR_SERVER_IGNORE_CERT
-    response = requests.post(FHIR_SERVER_AUTH_URL, verify=verify, headers=headers, json=body)
+    response = requests.post(
+        FHIR_SERVER_AUTH_URL,
+        verify=verify,
+        headers=headers,
+        json=body,
+    )
     response.raise_for_status()
     data = response.json()
     assert data["token_type"] == "Bearer"
@@ -53,9 +58,7 @@ class AuthSession:
             current_app.logger.debug(f"  obtained: {token}")
             AuthSession._token = token
             AuthSession._token_expiration = now + lifespan
-        self.session.headers.update({
-            "Authorization": f"Bearer {AuthSession._token}"}
-        )
+        self.session.headers.update({"Authorization": f"Bearer {AuthSession._token}"})
 
     def delete(self, url, **kwargs):
         self._update_token()
