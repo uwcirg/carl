@@ -12,9 +12,13 @@ def next_page_link_from_bundle(bundle):
     if not (next_page_link and len(next_page_link)):
         return
 
-    current_app.logger.debug("Next page link: %s", next_page_link)
     # jmespath returns a list of matches, with the requested value at element zero
-    return next_page_link[0][0]
+    current_app.logger.debug(f"Next page link: {next_page_link}")
+    next_page_link = next_page_link[0][0]
+
+    if not next_page_link.startswith(FHIR_SERVER_URL):
+        next_page_link = FHIR_SERVER_URL + next_page_link
+    return next_page_link
 
 
 def next_resource_bundle(resource_type, search_params=None):
@@ -48,6 +52,7 @@ def next_resource_bundle(resource_type, search_params=None):
         next_page_link = next_page_link_from_bundle(bundle)
         if not next_page_link:
             return
+
 
         session = AuthSession()
         response = session.get(next_page_link, timeout=30)
