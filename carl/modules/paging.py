@@ -1,4 +1,5 @@
 """Module to assist in paging through HAPI search bundles"""
+from urllib.parse import urlparse
 from flask import current_app, has_app_context
 import jmespath
 
@@ -13,11 +14,12 @@ def next_page_link_from_bundle(bundle):
         return
 
     # jmespath returns a list of matches, with the requested value at element zero
-    current_app.logger.debug(f"Next page link: {next_page_link}")
     next_page_link = next_page_link[0][0]
 
     if not next_page_link.startswith(FHIR_SERVER_URL):
-        next_page_link = FHIR_SERVER_URL + next_page_link
+        # relative path includes path potentially included, get just the base
+        parsed = urlparse(FHIR_SERVER_URL)
+        next_page_link = f"{parsed.scheme}://{parsed.netloc}{next_page_link}"
     return next_page_link
 
 
