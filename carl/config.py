@@ -2,13 +2,18 @@
 
 Use env var to override
 """
+
 import os
 
 SERVER_NAME = os.getenv("SERVER_NAME")
 SECRET_KEY = os.getenv("SECRET_KEY")
 # URL scheme to use outside of request context
 PREFERRED_URL_SCHEME = os.getenv("PREFERRED_URL_SCHEME", "http")
-FHIR_SERVER_URL = os.getenv("FHIR_SERVER_URL")
+FHIR_CLIENT_ID = os.getenv("FHIR_CLIENT_ID")
+FHIR_CLIENT_SECRET = os.getenv("FHIR_CLIENT_SECRET")
+FHIR_SERVER_AUTH_URL = os.getenv("FHIR_SERVER_AUTH_URL")
+FHIR_SERVER_URL = os.getenv("FHIR_SERVER_URL", "")
+FHIR_SERVER_IGNORE_CERT = os.getenv("FHIR_SERVER_IGNORE_CERT", False)
 
 LOGSERVER_TOKEN = os.getenv("LOGSERVER_TOKEN")
 LOGSERVER_URL = os.getenv("LOGSERVER_URL")

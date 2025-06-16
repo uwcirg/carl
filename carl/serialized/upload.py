@@ -1,9 +1,9 @@
 import json
 import os
-import requests
 from flask import abort, current_app
 
 from carl.modules.factories import deserialize_resource
+from carl.modules.authsession import AuthSession
 
 
 def load_files():
@@ -35,7 +35,8 @@ def load_files():
                 endpoint += resource.search_url()
 
             current_app.logger.info(f"PUT {fname.name} to {endpoint}")
-            response = requests.put(endpoint, json=data, timeout=30)
+            session = AuthSession()
+            response = session.put(endpoint, json=data, timeout=30)
             current_app.logger.info(
                 f"status {response.status_code}, text {response.text}"
             )

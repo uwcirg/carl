@@ -1,4 +1,6 @@
 {
   "resourceType": "CodeSystem",
-  "url": "http://hl7.org/fhir/sid/icd-9-cm"
+  "url": "http://hl7.org/fhir/sid/icd-9-cm",
+  "status": "active",
+  "content": "complete"
 }

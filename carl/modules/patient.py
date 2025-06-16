@@ -1,8 +1,9 @@
 """FHIR ValueSet module"""
-import requests
+
 from flask import has_app_context, current_app
 
 from carl.config import FHIR_SERVER_URL
+from carl.modules.authsession import AuthSession
 from carl.modules.coding import Coding
 from carl.modules.paging import next_resource_bundle
 from carl.modules.resource import Resource
@@ -58,7 +59,8 @@ def patient_canonical_identifier(patient_id, site_code):
         return
 
     url = f"{FHIR_SERVER_URL}Patient/{patient_id}"
-    response = requests.get(url, timeout=30)
+    session = AuthSession()
+    response = session.get(url, timeout=30)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()

@@ -1,4 +1,5 @@
 """FHIR Coding module"""
+
 from carl.modules.resource import Resource
 
 

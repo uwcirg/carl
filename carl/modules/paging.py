@@ -1,9 +1,11 @@
 """Module to assist in paging through HAPI search bundles"""
+
+from urllib.parse import urlparse
 from flask import current_app, has_app_context
 import jmespath
-import requests
 
 from carl.config import FHIR_SERVER_URL
+from carl.modules.authsession import AuthSession
 from carl.modules.resource import Resource
 
 
@@ -13,7 +15,14 @@ def next_page_link_from_bundle(bundle):
         return
 
     # jmespath returns a list of matches, with the requested value at element zero
-    return next_page_link[0][0]
+    next_page_link = next_page_link[0][0]
+
+    if not next_page_link.startswith(FHIR_SERVER_URL):
+        # Handle servers returning relative path
+        # FHIR_SERVER_URL often includes partial path and must be stripped
+        parsed = urlparse(FHIR_SERVER_URL)
+        next_page_link = f"{parsed.scheme}://{parsed.netloc}{next_page_link}"
+    return next_page_link
 
 
 def next_resource_bundle(resource_type, search_params=None):
@@ -29,7 +38,8 @@ def next_resource_bundle(resource_type, search_params=None):
         else resource_type
     )
     url = f"{FHIR_SERVER_URL}{resource_string}"
-    response = requests.get(url=url, params=search_params, timeout=30)
+    session = AuthSession()
+    response = session.get(url=url, params=search_params, timeout=30)
     if has_app_context():
         current_app.logger.debug(f"HAPI GET: {response.url}")
     response.raise_for_status()
@@ -47,7 +57,8 @@ def next_resource_bundle(resource_type, search_params=None):
         if not next_page_link:
             return
 
-        response = requests.get(next_page_link, timeout=30)
+        session = AuthSession()
+        response = session.get(next_page_link, timeout=30)
         current_app.logger.debug(f"HAPI GET: {response.url}")
         response.raise_for_status()
         bundle = response.json()

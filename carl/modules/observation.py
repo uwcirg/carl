@@ -1,4 +1,5 @@
 """FHIR Observation module"""
+
 from carl.modules.codeableconcept import CodeableConcept
 from carl.modules.paging import next_resource_bundle
 from carl.modules.reference import Reference
