@@ -113,6 +113,6 @@ def persist_resource(resource):
     url = f"{FHIR_SERVER_URL}{resource.search_url()}"
     session = AuthSession()
     response = session.put(url=url, json=resource.as_fhir(), timeout=30)
-    logging.debug(f"HAPI PUT: {response.url}")
+    logging.debug(f"HAPI PUT: {response.url} {response.status_code}")
     response.raise_for_status()
     return response.json()
