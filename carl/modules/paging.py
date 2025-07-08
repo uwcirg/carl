@@ -1,12 +1,33 @@
 """Module to assist in paging through HAPI search bundles"""
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from flask import current_app, has_app_context
 import jmespath
 
 from carl.config import FHIR_SERVER_URL
 from carl.modules.authsession import AuthSession
 from carl.modules.resource import Resource
+
+
+def correct_path_from_url(url):
+    """Return a link for the configured FHIR_SERVER_URL
+
+    Possible scenarios to address:
+     - url is correct, beginning with FHIR_SERVER_URL
+     - url is incorrect, being a relative path
+     - url is incorrect, using a bogus host such as localhost
+
+    Attempt to sniff out the situation and return a full corrected URL
+    including the FHIR_SERVER_URL.
+    """
+    if url.startswith(FHIR_SERVER_URL):
+        return url
+
+    req = urlparse(url)
+    conf = urlparse(FHIR_SERVER_URL)
+    return urlunparse(
+        (conf.scheme, conf.netloc, req.path, req.params, req.query, req.fragment)
+    )
 
 
 def next_page_link_from_bundle(bundle):
@@ -17,11 +38,8 @@ def next_page_link_from_bundle(bundle):
     # jmespath returns a list of matches, with the requested value at element zero
     next_page_link = next_page_link[0][0]
 
-    if not next_page_link.startswith(FHIR_SERVER_URL):
-        # Handle servers returning relative path
-        # FHIR_SERVER_URL often includes partial path and must be stripped
-        parsed = urlparse(FHIR_SERVER_URL)
-        next_page_link = f"{parsed.scheme}://{parsed.netloc}{next_page_link}"
+    # Handle misconfigured FHIR servers or those returning relative path
+    next_page_link = correct_path_from_url(next_page_link)
     return next_page_link
 
 
