@@ -1,6 +1,5 @@
 """Module to assist in paging through HAPI search bundles"""
 
-import re
 from urllib.parse import urlparse, urlunparse
 from flask import current_app, has_app_context
 import jmespath
@@ -8,6 +7,7 @@ import jmespath
 from carl.config import FHIR_SERVER_URL
 from carl.modules.authsession import AuthSession
 from carl.modules.resource import Resource
+
 
 def correct_path_from_url(url):
     """Return a link for the configured FHIR_SERVER_URL
@@ -25,8 +25,9 @@ def correct_path_from_url(url):
 
     req = urlparse(url)
     conf = urlparse(FHIR_SERVER_URL)
-    return urlunparse((
-        conf.scheme, conf.netloc, req.path, req.params, req.query, req.fragment))
+    return urlunparse(
+        (conf.scheme, conf.netloc, req.path, req.params, req.query, req.fragment)
+    )
 
 
 def next_page_link_from_bundle(bundle):
@@ -38,7 +39,7 @@ def next_page_link_from_bundle(bundle):
     next_page_link = next_page_link[0][0]
 
     # Handle misconfigured FHIR servers or those returning relative path
-    next_page_link = correct_path_from_url(next_page_link) 
+    next_page_link = correct_path_from_url(next_page_link)
     return next_page_link
 
 
